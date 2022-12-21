@@ -3,6 +3,9 @@ import { GuardResultBulk, Tyr } from '@xtitusx/type-guard';
 
 import { HTTP_ANALYSER_CONFIG } from './http-analyser-config.const';
 import { HttpAnalyser } from './http-analyser/http-analyser';
+import { HttpCycle } from './http-analyser/http-cycle';
+import { HttpRequest } from './http-analyser/http-request';
+import { HttpScheme } from './http-analyser/types';
 
 let httpAnalyser: HttpAnalyser;
 
@@ -31,18 +34,24 @@ test.afterEach(async ({ page }) => {
     console.log(`HttpRequestCount: ${httpAnalyser.getHttpRequestCount()}`);
     console.log(`HttpSuccessResponseCount: ${httpAnalyser.getHttpSuccessResponseCount()}`);
     console.log(`HttpErrorResponseCount: ${httpAnalyser.getHttpErrorResponseCount()}`);
+    console.dir(JSON.stringify(Array.from(httpAnalyser.getHttpCycles())));
     await page.close();
 });
 
 for (const url of new Set(HTTP_ANALYSER_CONFIG.urls)) {
     test(`test with URL: ${url}`, async ({ page }) => {
-        /**
-         * page.on('request') is not capturing favicon.ico URI: https://github.com/microsoft/playwright/issues/7493
-         */
-        page.on('request', (request) => {
+        // page.on('request') is not capturing favicon.ico URI: https://github.com/microsoft/playwright/issues/7493
+        page.on('request', async (request) => {
             console.log('>>', request.method(), request.url());
-            httpAnalyser.incrementHttpRequestCount();
+
+            httpAnalyser
+                .getHttpCycles()
+                .set(
+                    request.url(),
+                    new HttpCycle(new HttpRequest(request, (await request.headerValue(':scheme')) as HttpScheme))
+                );
         });
+
         page.on('response', (response) => {
             httpAnalyser.incrementHttpResponseCount(response.status());
         });

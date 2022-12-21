@@ -1,8 +1,10 @@
 import { Tyr } from '@xtitusx/type-guard';
 
+import { HttpCycle } from './http-cycle';
+
 export class HttpAnalyser {
     private url: string;
-    private httpRequestCount: number;
+    private httpCycles: Map<string, HttpCycle> = new Map();
     private httpSuccessResponseCount: number;
     private httpErrorResponseCount: number;
 
@@ -12,7 +14,6 @@ export class HttpAnalyser {
     }
 
     private init(): void {
-        this.httpRequestCount = 0;
         this.httpSuccessResponseCount = 0;
         this.httpErrorResponseCount = 0;
     }
@@ -21,12 +22,12 @@ export class HttpAnalyser {
         return this.url;
     }
 
-    public getHttpRequestCount(): number {
-        return this.httpRequestCount;
+    public getHttpCycles(): Map<string, HttpCycle> {
+        return this.httpCycles;
     }
 
-    public incrementHttpRequestCount() {
-        this.httpRequestCount++;
+    public getHttpRequestCount(): number {
+        return this.httpCycles.size;
     }
 
     public getHttpSuccessResponseCount(): number {
