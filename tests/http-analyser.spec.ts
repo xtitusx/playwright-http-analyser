@@ -59,10 +59,12 @@ for (const url of new Set(HTTP_ANALYSER_CONFIG.urls)) {
 
             httpAnalyser.incrementHttpResponseCount(response.status());
 
+            const httpResponse = new HttpResponse(response);
+
             if (httpAnalyser.getHttpCycles().has(response.url())) {
-                httpAnalyser.getHttpCycles().get(response.url())?.setHttpResponse(new HttpResponse(response));
+                httpAnalyser.getHttpCycles().get(response.url())?.setHttpResponse(httpResponse);
             } else {
-                httpAnalyser.getHttpCycles().set(response.url(), new HttpCycle(null, new HttpResponse(response)));
+                httpAnalyser.getHttpCycles().set(response.url(), new HttpCycle(null, httpResponse));
             }
         });
 
