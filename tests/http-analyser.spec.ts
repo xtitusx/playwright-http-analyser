@@ -5,6 +5,7 @@ import { HTTP_ANALYSER_CONFIG } from './http-analyser-config.const';
 import { HttpAnalyser } from './http-analyser/http-analyser';
 import { HttpCycle } from './http-analyser/http-cycle';
 import { HttpRequest } from './http-analyser/http-request';
+import { HttpResponse } from './http-analyser/http-response';
 import { HttpScheme } from './http-analyser/types';
 
 let httpAnalyser: HttpAnalyser;
@@ -34,7 +35,7 @@ test.afterEach(async ({ page }) => {
     console.log(`HttpRequestCount: ${httpAnalyser.getHttpRequestCount()}`);
     console.log(`HttpSuccessResponseCount: ${httpAnalyser.getHttpSuccessResponseCount()}`);
     console.log(`HttpErrorResponseCount: ${httpAnalyser.getHttpErrorResponseCount()}`);
-    console.dir(JSON.stringify(Array.from(httpAnalyser.getHttpCycles())));
+    console.log(JSON.parse(JSON.stringify(httpAnalyser)));
     await page.close();
 });
 
@@ -44,16 +45,25 @@ for (const url of new Set(HTTP_ANALYSER_CONFIG.urls)) {
         page.on('request', async (request) => {
             console.log('>>', request.method(), request.url());
 
-            httpAnalyser
-                .getHttpCycles()
-                .set(
-                    request.url(),
-                    new HttpCycle(new HttpRequest(request, (await request.headerValue(':scheme')) as HttpScheme))
-                );
+            const httpRequest = new HttpRequest(request, (await request.headerValue(':scheme')) as HttpScheme);
+
+            if (httpAnalyser.getHttpCycles().has(request.url())) {
+                httpAnalyser.getHttpCycles().get(request.url())?.setHttpRequest(httpRequest);
+            } else {
+                httpAnalyser.getHttpCycles().set(request.url(), new HttpCycle(httpRequest, null));
+            }
         });
 
         page.on('response', (response) => {
+            console.log('<<', response.status(), response.url());
+
             httpAnalyser.incrementHttpResponseCount(response.status());
+
+            if (httpAnalyser.getHttpCycles().has(response.url())) {
+                httpAnalyser.getHttpCycles().get(response.url())?.setHttpResponse(new HttpResponse(response));
+            } else {
+                httpAnalyser.getHttpCycles().set(response.url(), new HttpCycle(null, new HttpResponse(response)));
+            }
         });
 
         await page.goto(url, { waitUntil: 'networkidle' });

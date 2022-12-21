@@ -1,3 +1,4 @@
+import { Response } from '@playwright/test';
 import { Tyr } from '@xtitusx/type-guard';
 
 import { HttpStatusCode } from './http-status-code';
@@ -5,8 +6,8 @@ import { HttpStatusCode } from './http-status-code';
 export class HttpResponse {
     private statusCode: HttpStatusCode;
 
-    constructor(statusCode: HttpStatusCode) {
-        this.statusCode = statusCode;
+    constructor(response: Response) {
+        this.statusCode = response.status();
     }
 
     public getStatusCode(): HttpStatusCode {

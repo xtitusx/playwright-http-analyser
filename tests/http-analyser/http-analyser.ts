@@ -30,6 +30,10 @@ export class HttpAnalyser {
         return this.httpCycles.size;
     }
 
+    public getHttpResponseCount(): number {
+        return this.httpCycles.size;
+    }
+
     public getHttpSuccessResponseCount(): number {
         return this.httpSuccessResponseCount;
     }

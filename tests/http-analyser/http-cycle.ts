@@ -2,18 +2,23 @@ import { HttpRequest } from './http-request';
 import { HttpResponse } from './http-response';
 
 export class HttpCycle {
-    private httpRequest: HttpRequest;
-    private httpResponse: HttpResponse;
+    private httpRequest: HttpRequest | null;
+    private httpResponse: HttpResponse | null;
 
-    constructor(httpRequest: HttpRequest) {
+    constructor(httpRequest: HttpRequest | null, httpResponse: HttpResponse | null) {
         this.httpRequest = httpRequest;
+        this.httpResponse = httpResponse;
     }
 
-    public getHttpRequest(): HttpRequest {
+    public getHttpRequest(): HttpRequest | null {
         return this.httpRequest;
     }
 
-    public getHttpResponse(): HttpResponse {
+    public setHttpRequest(httpRequest: HttpRequest): void {
+        this.httpRequest = httpRequest;
+    }
+
+    public getHttpResponse(): HttpResponse | null {
         return this.httpResponse;
     }
 
