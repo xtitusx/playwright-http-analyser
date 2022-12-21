@@ -4,7 +4,7 @@ import { GuardResultBulk, Tyr } from '@xtitusx/type-guard';
 import { HTTP_ANALYSER_CONFIG } from './http-analyser-config.const';
 import { HttpAnalyser } from './http-analyser/http-analyser';
 
-let urlAnalyser: HttpAnalyser;
+let httpAnalyser: HttpAnalyser;
 
 test.describe.configure({ mode: 'serial' });
 
@@ -24,13 +24,13 @@ test.beforeAll(async () => {
 
 test.beforeEach(async ({}, testInfo) => {
     console.log(`Running ${testInfo.title}`);
-    urlAnalyser = new HttpAnalyser(testInfo.title.substring(testInfo.title.indexOf(': ') + 2));
+    httpAnalyser = new HttpAnalyser(testInfo.title.substring(testInfo.title.indexOf(': ') + 2));
 });
 
 test.afterEach(async ({ page }) => {
-    console.log(`HttpRequestCount: ${urlAnalyser.getHttpRequestCount()}`);
-    console.log(`HttpSuccessResponseCount: ${urlAnalyser.getHttpSuccessResponseCount()}`);
-    console.log(`HttpErrorResponseCount: ${urlAnalyser.getHttpErrorResponseCount()}`);
+    console.log(`HttpRequestCount: ${httpAnalyser.getHttpRequestCount()}`);
+    console.log(`HttpSuccessResponseCount: ${httpAnalyser.getHttpSuccessResponseCount()}`);
+    console.log(`HttpErrorResponseCount: ${httpAnalyser.getHttpErrorResponseCount()}`);
     await page.close();
 });
 
@@ -41,10 +41,10 @@ for (const url of new Set(HTTP_ANALYSER_CONFIG.urls)) {
          */
         page.on('request', (request) => {
             console.log('>>', request.method(), request.url());
-            urlAnalyser.incrementHttpRequestCount();
+            httpAnalyser.incrementHttpRequestCount();
         });
         page.on('response', (response) => {
-            urlAnalyser.incrementHttpResponseCount(response.status());
+            httpAnalyser.incrementHttpResponseCount(response.status());
         });
 
         await page.goto(url, { waitUntil: 'networkidle' });
