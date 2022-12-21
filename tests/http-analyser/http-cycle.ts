@@ -3,16 +3,26 @@ import { GuardResultBulk, Tyr } from '@xtitusx/type-guard';
 import { HttpRequest } from './http-request';
 import { HttpResponse } from './http-response';
 
-export class HttpCycle {
-    private httpRequest: HttpRequest | null;
-    private httpResponse: HttpResponse | null;
+export interface IHttpCycleOptions {
+    httpRequest?: HttpRequest;
+    httpResponse?: HttpResponse;
+}
 
-    constructor(httpRequest: HttpRequest | null, httpResponse: HttpResponse | null) {
-        this.httpRequest = httpRequest;
-        this.httpResponse = httpResponse;
+export class HttpCycle {
+    private httpRequest: HttpRequest;
+    private httpResponse: HttpResponse;
+
+    constructor(options: IHttpCycleOptions) {
+        if (options.httpRequest) {
+            this.httpRequest = options.httpRequest;
+        }
+
+        if (options.httpResponse) {
+            this.httpResponse = options.httpResponse;
+        }
     }
 
-    public getHttpRequest(): HttpRequest | null {
+    public getHttpRequest(): HttpRequest {
         return this.httpRequest;
     }
 
@@ -20,7 +30,7 @@ export class HttpCycle {
         this.httpRequest = httpRequest;
     }
 
-    public getHttpResponse(): HttpResponse | null {
+    public getHttpResponse(): HttpResponse {
         return this.httpResponse;
     }
 

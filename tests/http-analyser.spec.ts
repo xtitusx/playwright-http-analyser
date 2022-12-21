@@ -50,7 +50,7 @@ for (const url of new Set(HTTP_ANALYSER_CONFIG.urls)) {
             if (httpAnalyser.getHttpCycles().has(request.url())) {
                 httpAnalyser.getHttpCycles().get(request.url())?.setHttpRequest(httpRequest);
             } else {
-                httpAnalyser.getHttpCycles().set(request.url(), new HttpCycle(httpRequest, null));
+                httpAnalyser.getHttpCycles().set(request.url(), new HttpCycle({ httpRequest: httpRequest }));
             }
         });
 
@@ -64,7 +64,7 @@ for (const url of new Set(HTTP_ANALYSER_CONFIG.urls)) {
             if (httpAnalyser.getHttpCycles().has(response.url())) {
                 httpAnalyser.getHttpCycles().get(response.url())?.setHttpResponse(httpResponse);
             } else {
-                httpAnalyser.getHttpCycles().set(response.url(), new HttpCycle(null, httpResponse));
+                httpAnalyser.getHttpCycles().set(response.url(), new HttpCycle({ httpResponse: httpResponse }));
             }
         });
 
