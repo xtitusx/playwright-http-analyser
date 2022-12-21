@@ -3,10 +3,6 @@ import { GuardResultBulk, Tyr } from '@xtitusx/type-guard';
 
 import { HTTP_ANALYSER_CONFIG } from './http-analyser-config.const';
 import { HttpAnalyser } from './http-analyser/http-analyser';
-import { HttpCycle } from './http-analyser/http-cycle';
-import { HttpRequest } from './http-analyser/http-request';
-import { HttpResponse } from './http-analyser/http-response';
-import { HttpScheme } from './http-analyser/types';
 
 let httpAnalyser: HttpAnalyser;
 
@@ -45,13 +41,7 @@ for (const url of new Set(HTTP_ANALYSER_CONFIG.urls)) {
         page.on('request', async (request) => {
             console.log('>>', request.method(), request.url());
 
-            const httpRequest = new HttpRequest(request, (await request.headerValue(':scheme')) as HttpScheme);
-
-            if (httpAnalyser.getHttpCycles().has(request.url())) {
-                httpAnalyser.getHttpCycles().get(request.url())?.setHttpRequest(httpRequest);
-            } else {
-                httpAnalyser.getHttpCycles().set(request.url(), new HttpCycle({ httpRequest: httpRequest }));
-            }
+            await httpAnalyser.addHttpRequest(request);
         });
 
         page.on('response', (response) => {
@@ -59,13 +49,7 @@ for (const url of new Set(HTTP_ANALYSER_CONFIG.urls)) {
 
             httpAnalyser.incrementHttpResponseCount(response.status());
 
-            const httpResponse = new HttpResponse(response);
-
-            if (httpAnalyser.getHttpCycles().has(response.url())) {
-                httpAnalyser.getHttpCycles().get(response.url())?.setHttpResponse(httpResponse);
-            } else {
-                httpAnalyser.getHttpCycles().set(response.url(), new HttpCycle({ httpResponse: httpResponse }));
-            }
+            httpAnalyser.addHttpResponse(response);
         });
 
         await page.goto(url, { waitUntil: 'networkidle' });
