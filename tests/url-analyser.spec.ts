@@ -1,7 +1,7 @@
 import { expect, test } from '@playwright/test';
 import { GuardResultBulk, Tyr } from '@xtitusx/type-guard';
 
-import config from './url-analyser.config.json';
+import { URL_ANALYSER_CONFIG } from './url-analyser-config.const';
 import { UrlAnalyser } from './url-analyser/url-analyser';
 
 let urlAnalyser: UrlAnalyser;
@@ -11,7 +11,7 @@ test.describe.configure({ mode: 'serial' });
 test.beforeAll(async () => {
     const guardResult = new GuardResultBulk()
         .add([
-            ...config.urls.map((url, index) => {
+            ...URL_ANALYSER_CONFIG.requestUrls.map((url, index) => {
                 return Tyr.string()
                     .isNotEmpty()
                     .contains('http', 'start')
@@ -36,7 +36,7 @@ test.afterEach(async ({ page }) => {
     await page.close();
 });
 
-for (const url of new Set(config.urls)) {
+for (const url of new Set(URL_ANALYSER_CONFIG.requestUrls)) {
     test(`test with URL: ${url}`, async ({ page }) => {
         /**
          * page.on('request') is not capturing favicon.ico URI: https://github.com/microsoft/playwright/issues/7493
