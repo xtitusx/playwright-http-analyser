@@ -1,3 +1,3 @@
 export const URL_ANALYSER_CONFIG = {
-    requestUrls: ['https://www.google.fr'],
+    urls: ['https://www.google.fr'],
 };

@@ -11,12 +11,10 @@ test.describe.configure({ mode: 'serial' });
 test.beforeAll(async () => {
     const guardResult = new GuardResultBulk()
         .add([
-            ...URL_ANALYSER_CONFIG.requestUrls.map((url, index) => {
+            ...URL_ANALYSER_CONFIG.urls.map((url, index) => {
                 return Tyr.string()
-                    .isNotEmpty()
-                    .contains('http', 'start')
-                    .isTrimmed('both')
-                    .guard(url, `config.url[${index}]`);
+                    .matches(new RegExp('^http[s]?://[^ ]*$'))
+                    .guard(url, `URL_ANALYSER_CONFIG.urls[${index}]`);
             }),
         ])
         .combine();
@@ -36,7 +34,7 @@ test.afterEach(async ({ page }) => {
     await page.close();
 });
 
-for (const url of new Set(URL_ANALYSER_CONFIG.requestUrls)) {
+for (const url of new Set(URL_ANALYSER_CONFIG.urls)) {
     test(`test with URL: ${url}`, async ({ page }) => {
         /**
          * page.on('request') is not capturing favicon.ico URI: https://github.com/microsoft/playwright/issues/7493
