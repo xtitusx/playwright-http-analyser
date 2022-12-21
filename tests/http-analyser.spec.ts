@@ -1,17 +1,17 @@
 import { expect, test } from '@playwright/test';
 import { GuardResultBulk, Tyr } from '@xtitusx/type-guard';
 
-import { URL_ANALYSER_CONFIG } from './url-analyser-config.const';
-import { UrlAnalyser } from './url-analyser/url-analyser';
+import { HTTP_ANALYSER_CONFIG } from './http-analyser-config.const';
+import { HttpAnalyser } from './http-analyser/http-analyser';
 
-let urlAnalyser: UrlAnalyser;
+let urlAnalyser: HttpAnalyser;
 
 test.describe.configure({ mode: 'serial' });
 
 test.beforeAll(async () => {
     const guardResult = new GuardResultBulk()
         .add([
-            ...URL_ANALYSER_CONFIG.urls.map((url, index) => {
+            ...HTTP_ANALYSER_CONFIG.urls.map((url, index) => {
                 return Tyr.string()
                     .matches(new RegExp('^http[s]?://[^ ]*$'))
                     .guard(url, `URL_ANALYSER_CONFIG.urls[${index}]`);
@@ -24,7 +24,7 @@ test.beforeAll(async () => {
 
 test.beforeEach(async ({}, testInfo) => {
     console.log(`Running ${testInfo.title}`);
-    urlAnalyser = new UrlAnalyser(testInfo.title.substring(testInfo.title.indexOf(': ') + 2));
+    urlAnalyser = new HttpAnalyser(testInfo.title.substring(testInfo.title.indexOf(': ') + 2));
 });
 
 test.afterEach(async ({ page }) => {
@@ -34,7 +34,7 @@ test.afterEach(async ({ page }) => {
     await page.close();
 });
 
-for (const url of new Set(URL_ANALYSER_CONFIG.urls)) {
+for (const url of new Set(HTTP_ANALYSER_CONFIG.urls)) {
     test(`test with URL: ${url}`, async ({ page }) => {
         /**
          * page.on('request') is not capturing favicon.ico URI: https://github.com/microsoft/playwright/issues/7493

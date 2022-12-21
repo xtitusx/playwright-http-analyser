@@ -1,6 +1,6 @@
 import { Tyr } from '@xtitusx/type-guard';
 
-export class UrlAnalyser {
+export class HttpAnalyser {
     private url: string;
     private httpRequestCount: number;
     private httpSuccessResponseCount: number;
