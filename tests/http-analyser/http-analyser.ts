@@ -8,8 +8,8 @@ import { HttpScheme } from './types';
 
 export class HttpAnalyser {
     private url: string;
-    private httpCycles: Map<string, HttpCycle>;
     private summary: HttpAnalyserSummary;
+    private httpCyclesByUrl: Map<string, HttpCycle>;
     /**
      * Transient property.
      */
@@ -17,8 +17,8 @@ export class HttpAnalyser {
 
     constructor(url: string) {
         this.url = url;
-        this.httpCycles = new Map();
         this.summary = new HttpAnalyserSummary();
+        this.httpCyclesByUrl = new Map();
         this.httpMessageCount = 0;
         Object.defineProperty(this, 'httpMessageCount', {
             enumerable: false,
@@ -29,18 +29,18 @@ export class HttpAnalyser {
         return this.url;
     }
 
-    public getHttpCycles(): Map<string, HttpCycle> {
-        return this.httpCycles;
-    }
-
     /**
      * Forces a summary refresh on the getter if needed.
      * @returns
      */
     public refreshAndGetSummary(): HttpAnalyserSummary {
         return this.summary.getHttpMessageCount() !== this.httpMessageCount
-            ? this.summary.aggregate(this.httpMessageCount, this.httpCycles)
+            ? this.summary.aggregate(this.httpMessageCount, this.httpCyclesByUrl)
             : this.summary;
+    }
+
+    public getHttpCyclesByUrl(): Map<string, HttpCycle> {
+        return this.httpCyclesByUrl;
     }
 
     /**
@@ -69,10 +69,10 @@ export class HttpAnalyser {
     private async addHttpRequest(request: Request): Promise<void> {
         const httpRequest = new HttpRequest(request, (await request.headerValue(':scheme')) as HttpScheme);
 
-        if (this.getHttpCycles().has(request.url())) {
-            this.getHttpCycles().get(request.url())?.setHttpRequest(httpRequest);
+        if (this.getHttpCyclesByUrl().has(request.url())) {
+            this.getHttpCyclesByUrl().get(request.url())?.setHttpRequest(httpRequest);
         } else {
-            this.getHttpCycles().set(request.url(), new HttpCycle({ httpRequest: httpRequest }));
+            this.getHttpCyclesByUrl().set(request.url(), new HttpCycle({ httpRequest: httpRequest }));
         }
     }
 
@@ -83,10 +83,10 @@ export class HttpAnalyser {
     private addHttpResponse(response: Response): void {
         const httpResponse = new HttpResponse(response);
 
-        if (this.getHttpCycles().has(response.url())) {
-            this.getHttpCycles().get(response.url())?.setHttpResponse(httpResponse);
+        if (this.getHttpCyclesByUrl().has(response.url())) {
+            this.getHttpCyclesByUrl().get(response.url())?.setHttpResponse(httpResponse);
         } else {
-            this.getHttpCycles().set(response.url(), new HttpCycle({ httpResponse: httpResponse }));
+            this.getHttpCyclesByUrl().set(response.url(), new HttpCycle({ httpResponse: httpResponse }));
         }
     }
 }

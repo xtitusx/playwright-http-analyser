@@ -43,7 +43,8 @@ export class HttpAnalyserSummary {
      * @param httpCycles
      * @returns
      */
-    public aggregate(httpMessageCount: number, httpCycles: Map<string, HttpCycle>): this {
+    public aggregate(httpMessageCount: number, httpCyclesByUrl: Map<string, HttpCycle>): this {
+        const httpCycles = Array.from(httpCyclesByUrl);
         this.httpMessageCount = httpMessageCount;
         this.aggregateHttpRequestCount(httpCycles);
         this.aggregateHttpResponseCount(httpCycles);
@@ -56,44 +57,44 @@ export class HttpAnalyserSummary {
         return this;
     }
 
-    private aggregateHttpRequestCount(httpCycles: Map<string, HttpCycle>): void {
-        this.httpRequestCount = Array.from(httpCycles).filter(([, httpCycle]) =>
+    private aggregateHttpRequestCount(httpCycles: Array<[string, HttpCycle]>): void {
+        this.httpRequestCount = httpCycles.filter(([, httpCycle]) =>
             Tyr.class().isInstanceOf(HttpRequest).guard(httpCycle.getHttpRequest()).isSuccess()
         ).length;
     }
 
-    private aggregateHttpResponseCount(httpCycles: Map<string, HttpCycle>): void {
-        this.httpResponseCount = Array.from(httpCycles).filter(([, httpCycle]) =>
+    private aggregateHttpResponseCount(httpCycles: Array<[string, HttpCycle]>): void {
+        this.httpResponseCount = httpCycles.filter(([, httpCycle]) =>
             Tyr.class().isInstanceOf(HttpResponse).guard(httpCycle.getHttpResponse()).isSuccess()
         ).length;
     }
 
-    private aggregateInformationalResponseCount(httpCycles: Map<string, HttpCycle>): void {
-        this.httpInformationalResponseCount = Array.from(httpCycles).filter(([, httpCycle]) =>
+    private aggregateInformationalResponseCount(httpCycles: Array<[string, HttpCycle]>): void {
+        this.httpInformationalResponseCount = httpCycles.filter(([, httpCycle]) =>
             httpCycle?.getHttpResponse().isInformational()
         ).length;
     }
 
-    private aggregateSuccessfulResponseCount(httpCycles: Map<string, HttpCycle>): void {
-        this.httpSuccessfulResponseCount = Array.from(httpCycles).filter(([, httpCycle]) =>
+    private aggregateSuccessfulResponseCount(httpCycles: Array<[string, HttpCycle]>): void {
+        this.httpSuccessfulResponseCount = httpCycles.filter(([, httpCycle]) =>
             httpCycle?.getHttpResponse().isSuccessful()
         ).length;
     }
 
-    private aggregateRedirectionResponseCount(httpCycles: Map<string, HttpCycle>): void {
-        this.httpRedirectionResponseCount = Array.from(httpCycles).filter(
+    private aggregateRedirectionResponseCount(httpCycles: Array<[string, HttpCycle]>): void {
+        this.httpRedirectionResponseCount = httpCycles.filter(
             ([, httpCycle]) => httpCycle?.getHttpResponse().isRedirection() === true
         ).length;
     }
 
-    private aggregateClientErrorResponseCount(httpCycles: Map<string, HttpCycle>): void {
-        this.httpClientErrorResponseCount = Array.from(httpCycles).filter(([, httpCycle]) =>
+    private aggregateClientErrorResponseCount(httpCycles: Array<[string, HttpCycle]>): void {
+        this.httpClientErrorResponseCount = httpCycles.filter(([, httpCycle]) =>
             httpCycle?.getHttpResponse().isClientError()
         ).length;
     }
 
-    private aggregateServerErrorResponseCount(httpCycles: Map<string, HttpCycle>): void {
-        this.httpServerErrorResponseCount = Array.from(httpCycles).filter(([, httpCycle]) =>
+    private aggregateServerErrorResponseCount(httpCycles: Array<[string, HttpCycle]>): void {
+        this.httpServerErrorResponseCount = httpCycles.filter(([, httpCycle]) =>
             httpCycle?.getHttpResponse().isServerError()
         ).length;
     }

@@ -1,3 +1,5 @@
+const util = require('util');
+
 import { expect, test } from '@playwright/test';
 import { GuardResultBulk, Tyr } from '@xtitusx/type-guard';
 
@@ -29,7 +31,9 @@ test.beforeEach(async ({}, testInfo) => {
 
 test.afterEach(async ({ page }) => {
     httpAnalyser.refreshAndGetSummary();
-    console.log(JSON.parse(JSON.stringify(httpAnalyser)));
+
+    console.log(util.inspect(httpAnalyser, { showHidden: false, depth: null, colors: true }));
+
     await page.close();
 });
 
