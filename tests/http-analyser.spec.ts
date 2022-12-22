@@ -28,11 +28,7 @@ test.beforeEach(async ({}, testInfo) => {
 });
 
 test.afterEach(async ({ page }) => {
-    const summary = httpAnalyser.getSummary();
-    console.log(`HttpRequestCount: ${summary.getHttpRequestCount()}`);
-    console.log(`HttpResponseCount: ${summary.getHttpResponseCount()}`);
-    console.log(`HttpSuccessResponseCount: ${summary.getHttpSuccessResponseCount()}`);
-    console.log(`HttpErrorResponseCount: ${summary.getHttpErrorResponseCount()}`);
+    httpAnalyser.refreshAndGetSummary();
     console.log(JSON.parse(JSON.stringify(httpAnalyser)));
     await page.close();
 });
