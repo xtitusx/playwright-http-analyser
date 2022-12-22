@@ -10,6 +10,9 @@ export class HttpAnalyser {
     private url: string;
     private httpCycles: Map<string, HttpCycle>;
     private summary: HttpAnalyserSummary;
+    /**
+     * Transient property.
+     */
     private httpMessageCount: number;
 
     constructor(url: string) {
@@ -17,7 +20,6 @@ export class HttpAnalyser {
         this.httpCycles = new Map();
         this.summary = new HttpAnalyserSummary();
         this.httpMessageCount = 0;
-        // Transient property
         Object.defineProperty(this, 'httpMessageCount', {
             enumerable: false,
         });
@@ -36,7 +38,7 @@ export class HttpAnalyser {
      * @returns
      */
     public refreshAndGetSummary(): HttpAnalyserSummary {
-        return this.summary.getAggregatedHttpMessageCount() !== this.httpMessageCount
+        return this.summary.getHttpMessageCount() !== this.httpMessageCount
             ? this.summary.aggregate(this.httpMessageCount, this.httpCycles)
             : this.summary;
     }
