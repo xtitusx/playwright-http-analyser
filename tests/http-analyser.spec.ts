@@ -41,7 +41,7 @@ for (const url of new Set(HTTP_ANALYSER_CONFIG.urls)) {
         page.on('request', async (request) => {
             console.log('>>', request.method(), request.url());
 
-            await httpAnalyser.addHttpRequest(request);
+            await httpAnalyser.parseHttpMessage(request);
         });
 
         page.on('response', (response) => {
@@ -49,7 +49,7 @@ for (const url of new Set(HTTP_ANALYSER_CONFIG.urls)) {
 
             httpAnalyser.incrementHttpResponseCount(response.status());
 
-            httpAnalyser.addHttpResponse(response);
+            httpAnalyser.parseHttpMessage(response);
         });
 
         await page.goto(url, { waitUntil: 'networkidle' });

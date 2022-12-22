@@ -39,7 +39,7 @@ export class HttpCycle {
     }
 
     /**
-     *  The request is complete when a response from the server is received.
+     *  The cycle is complete when a response from the server is received.
      */
     public isComplete(): boolean {
         return new GuardResultBulk()

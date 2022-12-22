@@ -30,7 +30,28 @@ export class HttpAnalyser {
         return this.httpCycles;
     }
 
-    public async addHttpRequest(request: Request): Promise<void> {
+    /**
+     * Parses and adds the built HttpRequest or HttpResponse instance in the corresponding HttpCycle instance.
+     * @param request
+     */
+    public async parseHttpMessage(message: Request | Response): Promise<void> {
+        switch (message.constructor.name) {
+            case 'Request': {
+                await this.addHttpRequest(message as Request);
+                break;
+            }
+            case 'Response': {
+                this.addHttpResponse(message as Response);
+                break;
+            }
+        }
+    }
+
+    /**
+     * Adds the built HttpRequest instance in the corresponding HttpCycle instance.
+     * @param request
+     */
+    private async addHttpRequest(request: Request): Promise<void> {
         const httpRequest = new HttpRequest(request, (await request.headerValue(':scheme')) as HttpScheme);
 
         if (this.getHttpCycles().has(request.url())) {
@@ -40,7 +61,11 @@ export class HttpAnalyser {
         }
     }
 
-    public addHttpResponse(response: Response): void {
+    /**
+     * Adds the built HttpResponse instance in the corresponding HttpCycle instance.
+     * @param request
+     */
+    private addHttpResponse(response: Response): void {
         const httpResponse = new HttpResponse(response);
 
         if (this.getHttpCycles().has(response.url())) {
