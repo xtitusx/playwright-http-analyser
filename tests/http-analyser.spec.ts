@@ -28,9 +28,11 @@ test.beforeEach(async ({}, testInfo) => {
 });
 
 test.afterEach(async ({ page }) => {
-    console.log(`HttpRequestCount: ${httpAnalyser.getHttpRequestCount()}`);
-    console.log(`HttpSuccessResponseCount: ${httpAnalyser.getHttpSuccessResponseCount()}`);
-    console.log(`HttpErrorResponseCount: ${httpAnalyser.getHttpErrorResponseCount()}`);
+    const summary = httpAnalyser.getSummary();
+    console.log(`HttpRequestCount: ${summary.getHttpRequestCount()}`);
+    console.log(`HttpResponseCount: ${summary.getHttpResponseCount()}`);
+    console.log(`HttpSuccessResponseCount: ${summary.getHttpSuccessResponseCount()}`);
+    console.log(`HttpErrorResponseCount: ${summary.getHttpErrorResponseCount()}`);
     console.log(JSON.parse(JSON.stringify(httpAnalyser)));
     await page.close();
 });
@@ -46,8 +48,6 @@ for (const url of new Set(HTTP_ANALYSER_CONFIG.urls)) {
 
         page.on('response', (response) => {
             console.log('<<', response.status(), response.url());
-
-            httpAnalyser.incrementHttpResponseCount(response.status());
 
             httpAnalyser.parseHttpMessage(response);
         });

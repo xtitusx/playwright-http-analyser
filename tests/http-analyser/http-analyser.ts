@@ -1,6 +1,6 @@
 import { Request, Response } from '@playwright/test';
-import { Tyr } from '@xtitusx/type-guard';
 
+import { HttpAnalyserSummary } from './http-analyser-summary';
 import { HttpCycle } from './http-cycle';
 import { HttpRequest } from './http-request';
 import { HttpResponse } from './http-response';
@@ -8,18 +8,13 @@ import { HttpScheme } from './types';
 
 export class HttpAnalyser {
     private url: string;
-    private httpCycles: Map<string, HttpCycle> = new Map();
-    private httpSuccessResponseCount: number;
-    private httpErrorResponseCount: number;
+    private httpCycles: Map<string, HttpCycle>;
+    private summary: HttpAnalyserSummary;
 
     constructor(url: string) {
         this.url = url;
-        this.init();
-    }
-
-    private init(): void {
-        this.httpSuccessResponseCount = 0;
-        this.httpErrorResponseCount = 0;
+        this.httpCycles = new Map();
+        this.summary = new HttpAnalyserSummary();
     }
 
     public getUrl(): string {
@@ -47,6 +42,10 @@ export class HttpAnalyser {
         }
     }
 
+    public getSummary(): HttpAnalyserSummary {
+        return this.summary;
+    }
+
     /**
      * Adds the built HttpRequest instance in the corresponding HttpCycle instance.
      * @param request
@@ -72,30 +71,6 @@ export class HttpAnalyser {
             this.getHttpCycles().get(response.url())?.setHttpResponse(httpResponse);
         } else {
             this.getHttpCycles().set(response.url(), new HttpCycle({ httpResponse: httpResponse }));
-        }
-    }
-
-    public getHttpRequestCount(): number {
-        return this.httpCycles.size;
-    }
-
-    public getHttpResponseCount(): number {
-        return this.httpCycles.size;
-    }
-
-    public getHttpSuccessResponseCount(): number {
-        return this.httpSuccessResponseCount;
-    }
-
-    public getHttpErrorResponseCount(): number {
-        return this.httpErrorResponseCount;
-    }
-
-    public incrementHttpResponseCount(httpStatusCode: number) {
-        if (Tyr.number().isMax(399).guard(httpStatusCode).isSuccess()) {
-            this.httpSuccessResponseCount++;
-        } else {
-            this.httpErrorResponseCount++;
         }
     }
 }
