@@ -1,4 +1,5 @@
 import { Request, Response } from '@playwright/test';
+import { IBrowser, IOS } from 'ua-parser-js';
 
 import { HttpAnalyserSummary } from './http-analyser-summary';
 import { HttpCycle } from './http-cycle';
@@ -8,6 +9,9 @@ import { HttpScheme } from './types';
 
 export class HttpAnalyser {
     private url: string;
+    private os: IOS;
+    private browser: IBrowser;
+    private userAgent: string;
     private summary: HttpAnalyserSummary;
     private httpCyclesByUrl: Map<string, HttpCycle>;
     /**
@@ -15,8 +19,11 @@ export class HttpAnalyser {
      */
     private httpMessageCount: number;
 
-    constructor(url: string) {
+    constructor(url: string, os: IOS, browser: IBrowser, userAgent: string) {
         this.url = url;
+        this.os = os;
+        this.browser = browser;
+        this.userAgent = userAgent;
         this.summary = new HttpAnalyserSummary();
         this.httpCyclesByUrl = new Map();
         this.httpMessageCount = 0;
@@ -27,6 +34,18 @@ export class HttpAnalyser {
 
     public getUrl(): string {
         return this.url;
+    }
+
+    public getOs(): IOS {
+        return this.os;
+    }
+
+    public getBrowser(): IBrowser {
+        return this.browser;
+    }
+
+    public getUsertAgent(): string {
+        return this.userAgent;
     }
 
     /**

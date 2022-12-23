@@ -1,4 +1,5 @@
-const util = require('util');
+import util from 'util';
+import uaParser from 'ua-parser-js';
 
 import { expect, test } from '@playwright/test';
 import { GuardResultBulk, Tyr } from '@xtitusx/type-guard';
@@ -24,9 +25,12 @@ test.beforeAll(async () => {
     expect(guardResult.isSuccess(), guardResult.getMessage()).toBe(true);
 });
 
-test.beforeEach(async ({}, testInfo) => {
+test.beforeEach(async ({ page }, testInfo) => {
     console.log(`Running ${testInfo.title}`);
-    httpAnalyser = new HttpAnalyser(testInfo.title.substring(testInfo.title.indexOf(': ') + 2));
+
+    const { os, browser, ua } = uaParser(await page.evaluate(() => navigator.userAgent));
+
+    httpAnalyser = new HttpAnalyser(testInfo.title.substring(testInfo.title.indexOf(': ') + 2), os, browser, ua);
 });
 
 test.afterEach(async ({ page }) => {

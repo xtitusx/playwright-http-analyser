@@ -82,8 +82,8 @@ export class HttpAnalyserSummary {
     }
 
     private aggregateRedirectionResponseCount(httpCycles: Array<[string, HttpCycle]>): void {
-        this.httpRedirectionResponseCount = httpCycles.filter(
-            ([, httpCycle]) => httpCycle?.getHttpResponse().isRedirection() === true
+        this.httpRedirectionResponseCount = httpCycles.filter(([, httpCycle]) =>
+            httpCycle?.getHttpResponse().isRedirection()
         ).length;
     }
 
