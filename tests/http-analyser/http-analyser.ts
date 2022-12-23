@@ -2,6 +2,7 @@ import { Request, Response } from '@playwright/test';
 import { IBrowser, IOS } from 'ua-parser-js';
 
 import { HttpAnalyserSummary } from './http-analyser-summary';
+import { HttpAnalyserUserAgent } from './http-analyser-user-agent';
 import { HttpCycle } from './http-cycle';
 import { HttpRequest } from './http-request';
 import { HttpResponse } from './http-response';
@@ -9,9 +10,7 @@ import { HttpScheme } from './types';
 
 export class HttpAnalyser {
     private url: string;
-    private os: IOS;
-    private browser: IBrowser;
-    private userAgent: string;
+    private userAgent: HttpAnalyserUserAgent;
     private summary: HttpAnalyserSummary;
     private httpCyclesByUrl: Map<string, HttpCycle>;
     /**
@@ -21,9 +20,7 @@ export class HttpAnalyser {
 
     constructor(url: string, os: IOS, browser: IBrowser, userAgent: string) {
         this.url = url;
-        this.os = os;
-        this.browser = browser;
-        this.userAgent = userAgent;
+        this.userAgent = new HttpAnalyserUserAgent(os, browser, userAgent);
         this.summary = new HttpAnalyserSummary();
         this.httpCyclesByUrl = new Map();
         this.httpMessageCount = 0;
@@ -36,15 +33,7 @@ export class HttpAnalyser {
         return this.url;
     }
 
-    public getOs(): IOS {
-        return this.os;
-    }
-
-    public getBrowser(): IBrowser {
-        return this.browser;
-    }
-
-    public getUsertAgent(): string {
+    public getUserAgent(): HttpAnalyserUserAgent {
         return this.userAgent;
     }
 
