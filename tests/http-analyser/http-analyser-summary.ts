@@ -5,28 +5,34 @@ import { HttpRequest } from './http-request';
 import { HttpResponse } from './http-response';
 
 export class HttpAnalyserSummary {
-    private httpMessageCount: number;
-    private httpRequestCount: number;
-    private httpResponseCount: number;
-    private httpInformationalResponseCount: number;
-    private httpSuccessfulResponseCount: number;
-    private httpRedirectionResponseCount: number;
-    private httpClientErrorResponseCount: number;
-    private httpServerErrorResponseCount: number;
+    private httpMessage: { count: number };
+    private httpRequest: {
+        count: number;
+    };
+    private httpResponse: {
+        count: number;
+        informationalCount: number;
+        successfullCount: number;
+        redirectionCount: number;
+        clientErrorCount: number;
+        serverErrorCount: number;
+    };
 
     constructor() {
         this.init();
     }
 
     private init(): void {
-        this.httpMessageCount = 0;
-        this.httpRequestCount = 0;
-        this.httpResponseCount = 0;
-        this.httpInformationalResponseCount = 0;
-        this.httpSuccessfulResponseCount = 0;
-        this.httpRedirectionResponseCount = 0;
-        this.httpClientErrorResponseCount = 0;
-        this.httpServerErrorResponseCount = 0;
+        this.httpMessage = { count: 0 };
+        this.httpRequest = { count: 0 };
+        this.httpResponse = {
+            count: 0,
+            informationalCount: 0,
+            successfullCount: 0,
+            redirectionCount: 0,
+            clientErrorCount: 0,
+            serverErrorCount: 0,
+        };
     }
 
     /**
@@ -34,7 +40,7 @@ export class HttpAnalyserSummary {
      * @returns The number of already aggregated HTTP messages.
      */
     public getHttpMessageCount(): number {
-        return this.httpMessageCount;
+        return this.httpMessage.count;
     }
 
     /**
@@ -45,7 +51,7 @@ export class HttpAnalyserSummary {
      */
     public aggregate(httpMessageCount: number, httpCyclesByUrl: Map<string, HttpCycle>): this {
         const httpCycles = Array.from(httpCyclesByUrl);
-        this.httpMessageCount = httpMessageCount;
+        this.httpMessage.count = httpMessageCount;
         this.aggregateHttpRequestCount(httpCycles);
         this.aggregateHttpResponseCount(httpCycles);
         this.aggregateInformationalResponseCount(httpCycles);
@@ -58,43 +64,43 @@ export class HttpAnalyserSummary {
     }
 
     private aggregateHttpRequestCount(httpCycles: Array<[string, HttpCycle]>): void {
-        this.httpRequestCount = httpCycles.filter(([, httpCycle]) =>
+        this.httpRequest.count = httpCycles.filter(([, httpCycle]) =>
             Tyr.class().isInstanceOf(HttpRequest).guard(httpCycle.getHttpRequest()).isSuccess()
         ).length;
     }
 
     private aggregateHttpResponseCount(httpCycles: Array<[string, HttpCycle]>): void {
-        this.httpResponseCount = httpCycles.filter(([, httpCycle]) =>
+        this.httpResponse.count = httpCycles.filter(([, httpCycle]) =>
             Tyr.class().isInstanceOf(HttpResponse).guard(httpCycle.getHttpResponse()).isSuccess()
         ).length;
     }
 
     private aggregateInformationalResponseCount(httpCycles: Array<[string, HttpCycle]>): void {
-        this.httpInformationalResponseCount = httpCycles.filter(([, httpCycle]) =>
+        this.httpResponse.informationalCount = httpCycles.filter(([, httpCycle]) =>
             httpCycle?.getHttpResponse().isInformational()
         ).length;
     }
 
     private aggregateSuccessfulResponseCount(httpCycles: Array<[string, HttpCycle]>): void {
-        this.httpSuccessfulResponseCount = httpCycles.filter(([, httpCycle]) =>
+        this.httpResponse.successfullCount = httpCycles.filter(([, httpCycle]) =>
             httpCycle?.getHttpResponse().isSuccessful()
         ).length;
     }
 
     private aggregateRedirectionResponseCount(httpCycles: Array<[string, HttpCycle]>): void {
-        this.httpRedirectionResponseCount = httpCycles.filter(([, httpCycle]) =>
+        this.httpResponse.redirectionCount = httpCycles.filter(([, httpCycle]) =>
             httpCycle?.getHttpResponse().isRedirection()
         ).length;
     }
 
     private aggregateClientErrorResponseCount(httpCycles: Array<[string, HttpCycle]>): void {
-        this.httpClientErrorResponseCount = httpCycles.filter(([, httpCycle]) =>
+        this.httpResponse.clientErrorCount = httpCycles.filter(([, httpCycle]) =>
             httpCycle?.getHttpResponse().isClientError()
         ).length;
     }
 
     private aggregateServerErrorResponseCount(httpCycles: Array<[string, HttpCycle]>): void {
-        this.httpServerErrorResponseCount = httpCycles.filter(([, httpCycle]) =>
+        this.httpResponse.serverErrorCount = httpCycles.filter(([, httpCycle]) =>
             httpCycle?.getHttpResponse().isServerError()
         ).length;
     }

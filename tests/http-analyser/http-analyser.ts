@@ -6,7 +6,7 @@ import { HttpAnalyserUserAgent } from './http-analyser-user-agent';
 import { HttpCycle } from './http-cycle';
 import { HttpRequest } from './http-request';
 import { HttpResponse } from './http-response';
-import { HttpScheme } from './types';
+import { HttpScheme } from './dictionaries/types';
 
 export class HttpAnalyser {
     private url: string;
