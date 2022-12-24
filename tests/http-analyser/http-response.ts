@@ -1,7 +1,7 @@
 import { Response } from '@playwright/test';
 import { Tyr } from '@xtitusx/type-guard';
 
-import { HttpStatusCode } from './http-status-code';
+import { HttpStatusCode } from './dictionaries/http-status-code';
 
 export class HttpResponse {
     private statusCode: HttpStatusCode;

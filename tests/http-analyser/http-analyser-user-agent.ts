@@ -3,12 +3,12 @@ import { IOS, IBrowser } from 'ua-parser-js';
 export class HttpAnalyserUserAgent {
     private os: IOS;
     private browser: IBrowser;
-    private userAgent: string;
+    private ua: string;
 
-    constructor(os: IOS, browser: IBrowser, userAgent: string) {
+    constructor(os: IOS, browser: IBrowser, ua: string) {
         this.os = os;
         this.browser = browser;
-        this.userAgent = userAgent;
+        this.ua = ua;
     }
 
     public getOs(): IOS {
@@ -19,7 +19,7 @@ export class HttpAnalyserUserAgent {
         return this.browser;
     }
 
-    public getUsertAgent(): string {
-        return this.userAgent;
+    public getUa(): string {
+        return this.ua;
     }
 }
