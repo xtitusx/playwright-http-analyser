@@ -1,20 +1,32 @@
 {
-  "name": "playright",
+  "name": "playwright",
   "version": "1.0.0",
   "description": "",
   "main": "index.js",
-  "scripts": {},
+  "scripts": {
+    "clean": "rimraf playwright-report",
+    "test": "npx playwright test http-analyser.spec.ts",
+    "test:chromium": "npm run test -- --project chromium",
+    "test:chromium:headed": "npm run test:chromium -- --headed",
+    "lint:check": "eslint --max-warnings 0 --ext .ts src/",
+    "lint:fix": "eslint --max-warnings 0 --fix --ext .ts src/",
+    "prettier:check": "prettier --check  './**/*.{ts,md}'",
+    "prettier:fix": "prettier --write './**/*.{ts,md}'"
+  },
   "keywords": [],
-  "author": "",
-  "license": "ISC",
+  "author": "Benjamin Tussac",
+  "license": "MIT",
   "devDependencies": {
     "@playwright/test": "^1.29.0",
+    "@types/ua-parser-js": "^0.7.36",
     "@typescript-eslint/eslint-plugin": "^5.46.1",
     "@typescript-eslint/parser": "^5.46.1",
     "@xtitusx/type-guard": "^5.0.0",
     "eslint": "^8.30.0",
     "eslint-config-prettier": "^8.5.0",
     "eslint-plugin-prettier": "^4.2.1",
-    "prettier": "^2.8.1"
+    "prettier": "^2.8.1",
+    "rimraf": "^3.0.2",
+    "ua-parser-js": "^1.0.32"
   }
 }

@@ -1,0 +1,67 @@
+import util from 'util';
+import uaParser from 'ua-parser-js';
+import { expect, test } from '@playwright/test';
+import { GuardResultBulk, Tyr } from '@xtitusx/type-guard';
+
+import { HTTP_ANALYSER_CONFIG } from './http-analyser/config/http-analyser-config.const';
+import { HttpAnalyser } from './http-analyser/http-analyser';
+import { SerializerFactory } from './http-analyser/serializer/serializer.factory';
+
+let httpAnalyser: HttpAnalyser;
+
+test.describe.configure({ mode: 'serial' });
+
+test.beforeAll(async () => {
+    const guardResult = new GuardResultBulk()
+        .add([
+            ...HTTP_ANALYSER_CONFIG.urls.map((url, index) => {
+                return Tyr.string()
+                    .matches(new RegExp('^http[s]?://[^ ]*$'))
+                    .guard(url, `URL_ANALYSER_CONFIG.urls[${index}]`);
+            }),
+        ])
+        .combine();
+
+    expect(guardResult.isSuccess(), guardResult.getMessage()).toBe(true);
+
+    if (HTTP_ANALYSER_CONFIG.serializer.clean === true) {
+        // TODO
+    }
+});
+
+test.beforeEach(async ({ page }, testInfo) => {
+    console.log(`Running ${testInfo.title}`);
+
+    const { os, browser, ua } = uaParser(await page.evaluate(() => navigator.userAgent));
+
+    httpAnalyser = new HttpAnalyser(testInfo.title.substring(testInfo.title.indexOf(': ') + 2), os, browser, ua);
+});
+
+test.afterEach(async ({ page }) => {
+    httpAnalyser.refreshAndGetSummary();
+
+    console.log(util.inspect(httpAnalyser, { showHidden: false, depth: null, colors: true }));
+
+    SerializerFactory.getInstance().create(HTTP_ANALYSER_CONFIG.serializer.type, httpAnalyser).serialize();
+
+    await page.close();
+});
+
+for (const url of new Set(HTTP_ANALYSER_CONFIG.urls)) {
+    test(`test with URL: ${url}`, async ({ page }) => {
+        // page.on('request') is not capturing favicon.ico URI: https://github.com/microsoft/playwright/issues/7493
+        page.on('request', async (request) => {
+            console.log('>>', request.method(), request.url());
+
+            await httpAnalyser.parseHttpMessage(request);
+        });
+
+        page.on('response', (response) => {
+            console.log('<<', response.status(), response.url());
+
+            httpAnalyser.parseHttpMessage(response);
+        });
+
+        await page.goto(url, { waitUntil: 'networkidle' });
+    });
+}

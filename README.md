@@ -1,1 +1,1 @@
-# playwright-url-analyser
+# playwright-http-analyser
