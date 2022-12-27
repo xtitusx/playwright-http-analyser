@@ -9,6 +9,7 @@ import { HttpResponse } from './http-response';
 import { HttpScheme } from './dictionaries/types';
 
 export class HttpAnalyser {
+    private dateTime: string;
     private url: string;
     private userAgent: HttpAnalyserUserAgent;
     private summary: HttpAnalyserSummary;
@@ -19,6 +20,7 @@ export class HttpAnalyser {
     private httpMessageCount: number;
 
     constructor(url: string, os: IOS, browser: IBrowser, userAgent: string) {
+        this.dateTime = new Date().toISOString();
         this.url = url;
         this.userAgent = new HttpAnalyserUserAgent(os, browser, userAgent);
         this.summary = new HttpAnalyserSummary();
@@ -27,6 +29,10 @@ export class HttpAnalyser {
         Object.defineProperty(this, 'httpMessageCount', {
             enumerable: false,
         });
+    }
+
+    public getDateTime(): string {
+        return this.dateTime;
     }
 
     public getUrl(): string {

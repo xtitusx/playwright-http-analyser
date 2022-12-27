@@ -1,6 +1,6 @@
 import { Request } from '@playwright/test';
 
-import { HttpMethod, HttpScheme } from './types';
+import { HttpMethod, HttpScheme } from './dictionaries/types';
 
 export class HttpRequest {
     private url: string;

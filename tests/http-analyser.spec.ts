@@ -1,11 +1,11 @@
 import util from 'util';
 import uaParser from 'ua-parser-js';
-
 import { expect, test } from '@playwright/test';
 import { GuardResultBulk, Tyr } from '@xtitusx/type-guard';
 
-import { HTTP_ANALYSER_CONFIG } from './http-analyser-config.const';
+import { HTTP_ANALYSER_CONFIG } from './http-analyser/config/http-analyser-config.const';
 import { HttpAnalyser } from './http-analyser/http-analyser';
+import { SerializerFactory } from './http-analyser/serializer/serializer.factory';
 
 let httpAnalyser: HttpAnalyser;
 
@@ -23,6 +23,10 @@ test.beforeAll(async () => {
         .combine();
 
     expect(guardResult.isSuccess(), guardResult.getMessage()).toBe(true);
+
+    if (HTTP_ANALYSER_CONFIG.serializer.clean === true) {
+        // TODO
+    }
 });
 
 test.beforeEach(async ({ page }, testInfo) => {
@@ -37,6 +41,8 @@ test.afterEach(async ({ page }) => {
     httpAnalyser.refreshAndGetSummary();
 
     console.log(util.inspect(httpAnalyser, { showHidden: false, depth: null, colors: true }));
+
+    SerializerFactory.getInstance().create(HTTP_ANALYSER_CONFIG.serializer.type, httpAnalyser).serialize();
 
     await page.close();
 });
