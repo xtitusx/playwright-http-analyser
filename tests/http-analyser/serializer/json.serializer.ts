@@ -1,3 +1,4 @@
+import { Tyr } from '@xtitusx/type-guard';
 import fs from 'fs';
 import fsPromises from 'fs/promises';
 import * as path from 'path';
@@ -7,6 +8,9 @@ import { HttpAnalyser } from '../http-analyser';
 import { Serializer } from './serializer';
 
 export class JsonSerializer extends Serializer {
+    private static readonly REPORT_FILE_PREFIX = 'report';
+    private static readonly REPORT_FILE_EXTENSION = '.json';
+
     constructor() {
         super();
     }
@@ -25,7 +29,13 @@ export class JsonSerializer extends Serializer {
      * @override
      */
     public async clean(): Promise<void> {
-        const files = await fsPromises.readdir(HTTP_ANALYSER_CONFIG.serializer.json.relativePath);
+        const files = (await fsPromises.readdir(HTTP_ANALYSER_CONFIG.serializer.json.relativePath)).filter((file) =>
+            Tyr.string()
+                .contains(JsonSerializer.REPORT_FILE_PREFIX, 'start')
+                .contains(JsonSerializer.REPORT_FILE_EXTENSION, 'end')
+                .guard(file)
+                .isSuccess()
+        );
 
         await Promise.all(
             files.map((file) => {
@@ -39,9 +49,9 @@ export class JsonSerializer extends Serializer {
 
     private buildFileName(): string {
         return this.sanitizeFileName(
-            `report-${this.httpAnalyser.getDateTime()}-${this.httpAnalyser.getUrl()}-${
+            `${JsonSerializer.REPORT_FILE_PREFIX}-${this.httpAnalyser.getDateTime()}-${this.httpAnalyser.getUrl()}-${
                 this.httpAnalyser.getUserAgent().getBrowser().name
-            }.json`
+            }${JsonSerializer.REPORT_FILE_EXTENSION}`
         );
     }
 
