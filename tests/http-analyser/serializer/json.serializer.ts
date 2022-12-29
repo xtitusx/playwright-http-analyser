@@ -22,7 +22,14 @@ export class JsonSerializer extends Serializer {
     public serialize(httpAnalyser: HttpAnalyser): void {
         this.httpAnalyser = httpAnalyser;
         const filePath = path.resolve(`./${HTTP_ANALYSER_CONFIG.serializer.json.relativePath}/${this.buildFileName()}`);
-        fs.writeFileSync(filePath, JSON.stringify(this.httpAnalyser, null, 2));
+        fs.writeFileSync(
+            filePath,
+            JSON.stringify(
+                this.httpAnalyser,
+                null,
+                HTTP_ANALYSER_CONFIG.serializer.json.pretty === true ? 2 : undefined
+            )
+        );
     }
 
     /**
