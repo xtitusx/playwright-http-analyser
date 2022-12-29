@@ -17,7 +17,7 @@ export class MongoDbSerializer extends Serializer {
     /**
      * @override
      */
-    public clean(): void {
+    public clean(): Promise<void> {
         throw new Error('Method not implemented.');
     }
 }

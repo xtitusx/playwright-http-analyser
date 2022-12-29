@@ -10,5 +10,5 @@ export abstract class Serializer {
     /**
      * Remove all recorded reports.
      */
-    public abstract clean(): void;
+    public abstract clean(): Promise<void>;
 }

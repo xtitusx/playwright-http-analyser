@@ -29,7 +29,7 @@ test.beforeAll(async () => {
     serializer = SerializerFactory.getInstance().create(HTTP_ANALYSER_CONFIG.serializer.type);
 
     if (HTTP_ANALYSER_CONFIG.serializer.clean === true) {
-        serializer.clean();
+        await serializer.clean();
     }
 });
 
