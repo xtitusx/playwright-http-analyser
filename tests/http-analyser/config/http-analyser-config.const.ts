@@ -5,7 +5,7 @@ export const HTTP_ANALYSER_CONFIG = {
         clean: false,
         type: SerializerType.JSON,
         json: {
-            relativePath: 'playwright-report',
+            relativePath: 'playwright-http-analyser-report',
         },
         mongodb: {
             url: '',
