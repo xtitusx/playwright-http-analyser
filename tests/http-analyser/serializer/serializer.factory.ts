@@ -2,7 +2,6 @@ import { Tyr } from '@xtitusx/type-guard';
 
 import { Serializer } from './serializer';
 import { SerializerType } from './serializer-type.enum';
-import { HttpAnalyser } from '../http-analyser';
 import { JsonSerializer } from './json.serializer';
 import { MongoDbSerializer } from './mongodb.serializer';
 
@@ -21,10 +20,9 @@ export class SerializerFactory {
 
     /**
      * @param serializerType
-     * @param httpAnalyser
      * @throws {RangeError} If serializerType value is not correctly set.
      */
-    public create(serializerType: SerializerType, httpAnalyser: HttpAnalyser): Serializer {
+    public create(serializerType: SerializerType): Serializer {
         let serializer: Serializer;
 
         const guardResult = Tyr.string().isIn(Object.values(SerializerType)).guard(serializerType);
@@ -35,11 +33,11 @@ export class SerializerFactory {
 
         switch (serializerType) {
             case SerializerType.JSON: {
-                serializer = new JsonSerializer(httpAnalyser);
+                serializer = new JsonSerializer();
                 break;
             }
             case SerializerType.MONGODB: {
-                serializer = new MongoDbSerializer(httpAnalyser);
+                serializer = new MongoDbSerializer();
                 break;
             }
         }

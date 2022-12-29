@@ -6,14 +6,16 @@ import { HttpAnalyser } from '../http-analyser';
 import { Serializer } from './serializer';
 
 export class JsonSerializer extends Serializer {
-    constructor(httpAnalyser: HttpAnalyser) {
-        super(httpAnalyser);
+    constructor() {
+        super();
     }
 
     /**
      * @override
+     * @param httpAnalyser
      */
-    public serialize(): void {
+    public serialize(httpAnalyser: HttpAnalyser): void {
+        this.httpAnalyser = httpAnalyser;
         const filePath = path.resolve(`./${HTTP_ANALYSER_CONFIG.serializer.json.relativePath}/${this.buildFileName()}`);
         fs.writeFileSync(filePath, JSON.stringify(this.httpAnalyser, null, 2));
     }
@@ -26,14 +28,14 @@ export class JsonSerializer extends Serializer {
     }
 
     private buildFileName(): string {
-        return this.sanitizeFs(
+        return this.sanitizeFileName(
             `report-${this.httpAnalyser.getDateTime()}-${this.httpAnalyser.getUrl()}-${
                 this.httpAnalyser.getUserAgent().getBrowser().name
             }.json`
         );
     }
 
-    private sanitizeFs(fileName: string): string {
+    private sanitizeFileName(fileName: string): string {
         return fileName
             .replace(this.httpAnalyser.getDateTime(), this.httpAnalyser.getDateTime().replace(/-/g, ''))
             .replace(/[^a-zA-Z0-9-.]/g, '_');

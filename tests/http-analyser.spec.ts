@@ -6,7 +6,9 @@ import { GuardResultBulk, Tyr } from '@xtitusx/type-guard';
 import { HTTP_ANALYSER_CONFIG } from './http-analyser/config/http-analyser-config.const';
 import { HttpAnalyser } from './http-analyser/http-analyser';
 import { SerializerFactory } from './http-analyser/serializer/serializer.factory';
+import { Serializer } from './http-analyser/serializer/serializer';
 
+let serializer: Serializer;
 let httpAnalyser: HttpAnalyser;
 
 test.describe.configure({ mode: 'serial' });
@@ -24,8 +26,10 @@ test.beforeAll(async () => {
 
     expect(guardResult.isSuccess(), guardResult.getMessage()).toBe(true);
 
+    serializer = SerializerFactory.getInstance().create(HTTP_ANALYSER_CONFIG.serializer.type);
+
     if (HTTP_ANALYSER_CONFIG.serializer.clean === true) {
-        // TODO
+        serializer.clean();
     }
 });
 
@@ -42,7 +46,7 @@ test.afterEach(async ({ page }) => {
 
     console.log(util.inspect(httpAnalyser, { showHidden: false, depth: null, colors: true }));
 
-    SerializerFactory.getInstance().create(HTTP_ANALYSER_CONFIG.serializer.type, httpAnalyser).serialize();
+    serializer.serialize(httpAnalyser);
 
     await page.close();
 });

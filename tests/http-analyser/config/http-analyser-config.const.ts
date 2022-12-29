@@ -2,7 +2,7 @@ import { SerializerType } from '../serializer/serializer-type.enum';
 
 export const HTTP_ANALYSER_CONFIG = {
     serializer: {
-        clean: false,
+        clean: true,
         type: SerializerType.JSON,
         json: {
             relativePath: 'playwright-http-analyser-report',
