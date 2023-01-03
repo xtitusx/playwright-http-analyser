@@ -2,21 +2,22 @@ import { HttpAnalyser } from '../http-analyser';
 import { Serializer } from './serializer';
 
 export class MongoDbSerializer extends Serializer {
-    constructor(httpAnalyser: HttpAnalyser) {
-        super(httpAnalyser);
+    constructor() {
+        super();
     }
 
     /**
      * @override
+     * @param httpAnalyser
      */
-    public serialize(): void {
+    public serialize(httpAnalyser: HttpAnalyser): void {
         throw new Error('Method not implemented.');
     }
 
     /**
      * @override
      */
-    public clean(): void {
+    public clean(): Promise<void> {
         throw new Error('Method not implemented.');
     }
 }

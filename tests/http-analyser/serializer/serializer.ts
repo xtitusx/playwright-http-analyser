@@ -3,14 +3,12 @@ import { HttpAnalyser } from '../http-analyser';
 export abstract class Serializer {
     protected httpAnalyser: HttpAnalyser;
 
-    constructor(httpAnalyser: HttpAnalyser) {
-        this.httpAnalyser = httpAnalyser;
-    }
+    constructor() {}
 
-    public abstract serialize(): void;
+    public abstract serialize(httpAnalyser: HttpAnalyser): void;
 
     /**
      * Remove all recorded reports.
      */
-    public abstract clean(): void;
+    public abstract clean(): Promise<void>;
 }

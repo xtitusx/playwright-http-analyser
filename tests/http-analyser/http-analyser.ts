@@ -81,7 +81,10 @@ export class HttpAnalyser {
      * @param request
      */
     private async addHttpRequest(request: Request): Promise<void> {
-        const httpRequest = new HttpRequest(request, (await request.headerValue(':scheme')) as HttpScheme);
+        const httpScheme =
+            ((await request.headerValue(':scheme')) as HttpScheme) ?? this.extractHttpScheme(request.url());
+
+        const httpRequest = new HttpRequest(request, httpScheme);
 
         if (this.getHttpCyclesByUrl().has(request.url())) {
             this.getHttpCyclesByUrl().get(request.url())?.setHttpRequest(httpRequest);
@@ -102,5 +105,14 @@ export class HttpAnalyser {
         } else {
             this.getHttpCyclesByUrl().set(response.url(), new HttpCycle({ httpResponse: httpResponse }));
         }
+    }
+
+    /**
+     * Manually extracts HttpScheme from Url.
+     * @param url
+     * @returns
+     */
+    private extractHttpScheme(url: string): HttpScheme {
+        return url.substring(0, url.indexOf(':')) as HttpScheme;
     }
 }

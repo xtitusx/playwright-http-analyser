@@ -2,3 +2,5 @@ node_modules/
 /test-results/
 /playwright-report/
 /playwright/.cache/
+/playwright-http-analyser-report/*
+!playwright-http-analyser-report/.gitkeep 

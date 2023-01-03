@@ -1,11 +1,15 @@
 import { SerializerType } from '../serializer/serializer-type.enum';
 
 export const HTTP_ANALYSER_CONFIG = {
+    cache: {
+        enabled: false,
+    },
     serializer: {
-        clean: false,
+        clean: true,
         type: SerializerType.JSON,
         json: {
-            relativePath: 'playwright-report',
+            relativePath: 'playwright-http-analyser-report',
+            pretty: true,
         },
         mongodb: {
             url: '',
