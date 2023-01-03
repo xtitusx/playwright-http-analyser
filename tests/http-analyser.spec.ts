@@ -38,6 +38,13 @@ test.beforeEach(async ({ page }, testInfo) => {
 
     const { os, browser, ua } = uaParser(await page.evaluate(() => navigator.userAgent));
 
+    if (HTTP_ANALYSER_CONFIG.cache.enabled === false) {
+        // https://stackoverflow.com/questions/68522170/playwright-disable-caching-of-webpage-so-i-can-fetch-new-elements-after-scrollin
+        page.route('**', (route) => route.continue());
+        const session = await page.context().newCDPSession(page);
+        await session.send('Network.setCacheDisabled', { cacheDisabled: true });
+    }
+
     httpAnalyser = new HttpAnalyser(testInfo.title.substring(testInfo.title.indexOf(': ') + 2), os, browser, ua);
 });
 
@@ -53,6 +60,7 @@ test.afterEach(async ({ page }) => {
 
 for (const url of new Set(HTTP_ANALYSER_CONFIG.urls)) {
     test(`test with URL: ${url}`, async ({ page }) => {
+        // https://playwright.dev/docs/api/class-request
         // page.on('request') is not capturing favicon.ico URI: https://github.com/microsoft/playwright/issues/7493
         page.on('request', async (request) => {
             console.log('>>', request.method(), request.url());
