@@ -7,13 +7,17 @@ import { HTTP_ANALYSER_CONFIG } from './http-analyser/config/http-analyser-confi
 import { HttpAnalyser } from './http-analyser/http-analyser';
 import { SerializerFactory } from './http-analyser/serializer/serializer.factory';
 import { Serializer } from './http-analyser/serializer/serializer';
+import { Session } from './http-analyser/session/session';
+import { SessionFactory } from './http-analyser/session/session.factory';
+import { SessionType } from './http-analyser/session/session-type.enum';
 
 let serializer: Serializer;
+let session: Session;
 let httpAnalyser: HttpAnalyser;
 
 test.describe.configure({ mode: 'serial' });
 
-test.beforeAll(async () => {
+test.beforeAll(async ({}, testInfo) => {
     const guardResult = new GuardResultBulk()
         .add([
             ...HTTP_ANALYSER_CONFIG.urls.map((url, index) => {
@@ -28,7 +32,7 @@ test.beforeAll(async () => {
 
     serializer = SerializerFactory.getInstance().create(HTTP_ANALYSER_CONFIG.serializer.type);
 
-    if (HTTP_ANALYSER_CONFIG.serializer.clean === true) {
+    if (HTTP_ANALYSER_CONFIG.serializer.clean === true && testInfo.workerIndex === 0) {
         await serializer.clean();
     }
 });
@@ -38,11 +42,10 @@ test.beforeEach(async ({ page }, testInfo) => {
 
     const { os, browser, ua } = uaParser(await page.evaluate(() => navigator.userAgent));
 
+    session = SessionFactory.getInstance().create(browser.name as SessionType, page);
+
     if (HTTP_ANALYSER_CONFIG.cache.enabled === false) {
-        // https://stackoverflow.com/questions/68522170/playwright-disable-caching-of-webpage-so-i-can-fetch-new-elements-after-scrollin
-        page.route('**', (route) => route.continue());
-        const session = await page.context().newCDPSession(page);
-        await session.send('Network.setCacheDisabled', { cacheDisabled: true });
+        await session.disableCache();
     }
 
     httpAnalyser = new HttpAnalyser(testInfo.title.substring(testInfo.title.indexOf(': ') + 2), os, browser, ua);

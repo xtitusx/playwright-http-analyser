@@ -2,7 +2,7 @@ import { SerializerType } from '../serializer/serializer-type.enum';
 
 export const HTTP_ANALYSER_CONFIG = {
     cache: {
-        enabled: false,
+        enabled: true,
     },
     serializer: {
         clean: true,
@@ -16,5 +16,5 @@ export const HTTP_ANALYSER_CONFIG = {
             port: '',
         },
     },
-    urls: ['https://www.google.fr'],
+    urls: ['https://www.google.fr', 'https://clubic.com'],
 };
