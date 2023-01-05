@@ -1,8 +1,8 @@
 import { CDPSession, Page } from '@playwright/test';
 
-import { Session } from './session';
+import { PageContext } from './page-context';
 
-export class ChromeSession extends Session {
+export class ChromePageContext extends PageContext {
     private cdpSession: CDPSession;
 
     constructor(page: Page) {

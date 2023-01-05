@@ -1,6 +1,6 @@
 import { Page } from '@playwright/test';
 
-export class Session {
+export class PageContext {
     protected page: Page;
 
     constructor(page: Page) {

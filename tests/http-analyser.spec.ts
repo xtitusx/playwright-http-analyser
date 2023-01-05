@@ -7,12 +7,12 @@ import { HTTP_ANALYSER_CONFIG } from './http-analyser/config/http-analyser-confi
 import { HttpAnalyser } from './http-analyser/http-analyser';
 import { SerializerFactory } from './http-analyser/serializer/serializer.factory';
 import { Serializer } from './http-analyser/serializer/serializer';
-import { Session } from './http-analyser/session/session';
-import { SessionFactory } from './http-analyser/session/session.factory';
-import { SessionType } from './http-analyser/session/session-type.enum';
+import { PageContext } from './http-analyser/page-context/page-context';
+import { PageContextFactory } from './http-analyser/page-context/page-context.factory';
+import { BrowserType } from './http-analyser/page-context/browser-type.enum';
 
 let serializer: Serializer;
-let session: Session;
+let pageContext: PageContext;
 let httpAnalyser: HttpAnalyser;
 
 test.describe.configure({ mode: 'serial' });
@@ -42,10 +42,10 @@ test.beforeEach(async ({ page }, testInfo) => {
 
     const { os, browser, ua } = uaParser(await page.evaluate(() => navigator.userAgent));
 
-    session = SessionFactory.getInstance().create(browser.name as SessionType, page);
+    pageContext = PageContextFactory.getInstance().create(browser.name as BrowserType, page);
 
     if (HTTP_ANALYSER_CONFIG.cache.enabled === false) {
-        await session.disableCache();
+        await pageContext.disableCache();
     }
 
     httpAnalyser = new HttpAnalyser(testInfo.title.substring(testInfo.title.indexOf(': ') + 2), os, browser, ua);
