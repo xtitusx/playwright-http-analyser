@@ -78,5 +78,7 @@ for (const url of new Set(HTTP_ANALYSER_CONFIG.urls)) {
         });
 
         await page.goto(url, { waitUntil: 'networkidle' });
+
+        httpAnalyser.setNavigationTimings(await page.evaluate(() => performance.getEntriesByType('navigation')));
     });
 }

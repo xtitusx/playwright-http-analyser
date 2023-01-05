@@ -16,5 +16,5 @@ export const HTTP_ANALYSER_CONFIG = {
             port: '',
         },
     },
-    urls: ['https://www.google.fr', 'https://clubic.com'],
+    urls: ['https://www.google.fr', 'https://www.hardware.fr', 'https://clubic.com'],
 };
