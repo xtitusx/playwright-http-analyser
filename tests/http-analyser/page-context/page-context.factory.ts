@@ -1,8 +1,8 @@
 import { Page } from '@playwright/test';
 import { Tyr } from '@xtitusx/type-guard';
 
+import { Browser } from '../dictionaries/browser.enum';
 import { PageContext } from './page-context';
-import { BrowserType } from './browser-type.enum';
 import { ChromePageContext } from './chrome.page-context';
 
 export class PageContextFactory {
@@ -19,20 +19,20 @@ export class PageContextFactory {
     }
 
     /**
-     * @param browserType
-     * @throws {RangeError} If browserType value is not correctly set.
+     * @param browser
+     * @throws {RangeError} If browser value is not correctly set.
      */
-    public create(browserType: BrowserType, page: Page): PageContext {
+    public create(browser: Browser, page: Page): PageContext {
         let pageContext: PageContext;
 
-        const guardResult = Tyr.string().isIn(Object.values(BrowserType)).guard(browserType);
+        const guardResult = Tyr.string().isIn(Object.values(Browser)).guard(browser);
 
         if (!guardResult.isSuccess()) {
             throw new RangeError(guardResult.getMessage());
         }
 
-        switch (browserType) {
-            case BrowserType.CHROME: {
+        switch (browser) {
+            case Browser.CHROME: {
                 pageContext = new ChromePageContext(page);
                 break;
             }

@@ -9,7 +9,7 @@ import { SerializerFactory } from './http-analyser/serializer/serializer.factory
 import { Serializer } from './http-analyser/serializer/serializer';
 import { PageContext } from './http-analyser/page-context/page-context';
 import { PageContextFactory } from './http-analyser/page-context/page-context.factory';
-import { BrowserType } from './http-analyser/page-context/browser-type.enum';
+import { Browser } from './http-analyser/dictionaries/browser.enum';
 
 let serializer: Serializer;
 let pageContext: PageContext;
@@ -42,7 +42,7 @@ test.beforeEach(async ({ page }, testInfo) => {
 
     const { os, browser, ua } = uaParser(await page.evaluate(() => navigator.userAgent));
 
-    pageContext = PageContextFactory.getInstance().create(browser.name as BrowserType, page);
+    pageContext = PageContextFactory.getInstance().create(browser.name as Browser, page);
 
     if (HTTP_ANALYSER_CONFIG.cache.enabled === false) {
         await pageContext.disableCache();

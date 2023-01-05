@@ -1,8 +1,8 @@
 /**
- * @enum BrowserType
+ * @enum Browser
  * @description List of supported browsers.
  */
-export enum BrowserType {
+export enum Browser {
     CHROME = 'Chrome',
     FIREFOX = 'Firefox',
     SAFARI = 'Safari',
