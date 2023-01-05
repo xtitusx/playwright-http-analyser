@@ -13,7 +13,7 @@ export class HttpAnalyser {
     private url: string;
     private userAgent: HttpAnalyserUserAgent;
     private summary: HttpAnalyserSummary;
-    private httpCyclesByUrl: Map<string, HttpCycle>;
+    private network: Map<string, HttpCycle>;
     /**
      * Transient property.
      */
@@ -24,7 +24,7 @@ export class HttpAnalyser {
         this.url = url;
         this.userAgent = new HttpAnalyserUserAgent(os, browser, userAgent);
         this.summary = new HttpAnalyserSummary();
-        this.httpCyclesByUrl = new Map();
+        this.network = new Map();
         this.httpMessageCount = 0;
         Object.defineProperty(this, 'httpMessageCount', {
             enumerable: false,
@@ -48,13 +48,13 @@ export class HttpAnalyser {
      * @returns
      */
     public refreshAndGetSummary(): HttpAnalyserSummary {
-        return this.summary.getHttpMessageCount() !== this.httpMessageCount
-            ? this.summary.aggregate(this.httpMessageCount, this.httpCyclesByUrl)
+        return this.summary.getNetworkTotalCount() !== this.httpMessageCount
+            ? this.summary.aggregate(this.httpMessageCount, this.network)
             : this.summary;
     }
 
-    public getHttpCyclesByUrl(): Map<string, HttpCycle> {
-        return this.httpCyclesByUrl;
+    public getNetwork(): Map<string, HttpCycle> {
+        return this.network;
     }
 
     /**
@@ -86,10 +86,10 @@ export class HttpAnalyser {
 
         const httpRequest = new HttpRequest(request, httpScheme);
 
-        if (this.getHttpCyclesByUrl().has(request.url())) {
-            this.getHttpCyclesByUrl().get(request.url())?.setHttpRequest(httpRequest);
+        if (this.getNetwork().has(request.url())) {
+            this.getNetwork().get(request.url())?.setHttpRequest(httpRequest);
         } else {
-            this.getHttpCyclesByUrl().set(request.url(), new HttpCycle({ httpRequest: httpRequest }));
+            this.getNetwork().set(request.url(), new HttpCycle({ httpRequest: httpRequest }));
         }
     }
 
@@ -100,10 +100,10 @@ export class HttpAnalyser {
     private addHttpResponse(response: Response): void {
         const httpResponse = new HttpResponse(response);
 
-        if (this.getHttpCyclesByUrl().has(response.url())) {
-            this.getHttpCyclesByUrl().get(response.url())?.setHttpResponse(httpResponse);
+        if (this.getNetwork().has(response.url())) {
+            this.getNetwork().get(response.url())?.setHttpResponse(httpResponse);
         } else {
-            this.getHttpCyclesByUrl().set(response.url(), new HttpCycle({ httpResponse: httpResponse }));
+            this.getNetwork().set(response.url(), new HttpCycle({ httpResponse: httpResponse }));
         }
     }
 

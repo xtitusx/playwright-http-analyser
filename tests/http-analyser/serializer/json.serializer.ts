@@ -27,7 +27,8 @@ export class JsonSerializer extends Serializer {
             filePath,
             JSON.stringify(
                 this.httpAnalyser,
-                (key, value) => (key === 'httpCyclesByUrl' ? Array.from(value) : value),
+                (key, value) =>
+                    key === 'network' && value.hasOwnProperty('count') === false ? Array.from(value) : value,
                 HTTP_ANALYSER_CONFIG.serializer.json.pretty === true ? 2 : undefined
             )
         );
