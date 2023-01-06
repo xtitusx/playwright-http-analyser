@@ -12,9 +12,18 @@ export class ChromePageContext extends PageContext {
     /**
      * @override
      */
-    public async disableCache(): Promise<void> {
+    protected async disableCache(): Promise<void> {
         super.disableCache();
-        this.cdpSession = await this.page.context().newCDPSession(this.page);
+        this.cdpSession = this.cdpSession ?? (await this.page.context().newCDPSession(this.page));
         await this.cdpSession.send('Network.setCacheDisabled', { cacheDisabled: true });
+    }
+
+    /**
+     * @override
+     */
+    protected async enableCache(): Promise<void> {
+        super.enableCache();
+        this.cdpSession = this.cdpSession ?? (await this.page.context().newCDPSession(this.page));
+        await this.cdpSession.send('Network.setCacheDisabled', { cacheDisabled: false });
     }
 }

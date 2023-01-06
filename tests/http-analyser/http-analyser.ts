@@ -2,16 +2,17 @@ import { Request, Response } from '@playwright/test';
 import { IBrowser, IOS } from 'ua-parser-js';
 
 import { HttpAnalyserSummary } from './http-analyser-summary';
-import { HttpAnalyserUserAgent } from './http-analyser-user-agent';
+import { HttpAnalyserConfig } from './http-analyser-config';
 import { HttpCycle } from './http-cycle';
 import { HttpRequest } from './http-request';
 import { HttpResponse } from './http-response';
 import { HttpScheme } from './dictionaries/types';
+import { PageContext } from './page-context/page-context';
 
 export class HttpAnalyser {
     private dateTime: string;
     private url: string;
-    private userAgent: HttpAnalyserUserAgent;
+    private config: HttpAnalyserConfig;
     private summary: HttpAnalyserSummary;
     private network: Map<string, HttpCycle>;
     /**
@@ -20,10 +21,10 @@ export class HttpAnalyser {
     private httpMessageCount: number;
     private navigationTimings: object;
 
-    constructor(url: string, os: IOS, browser: IBrowser, userAgent: string) {
+    constructor(url: string, os: IOS, browser: IBrowser, userAgent: string, pageContext: PageContext) {
         this.dateTime = new Date().toISOString();
         this.url = url;
-        this.userAgent = new HttpAnalyserUserAgent(os, browser, userAgent);
+        this.config = new HttpAnalyserConfig(os, browser, userAgent, pageContext.hasCacheEnabled());
         this.summary = new HttpAnalyserSummary();
         this.network = new Map();
         this.httpMessageCount = 0;
@@ -40,8 +41,8 @@ export class HttpAnalyser {
         return this.url;
     }
 
-    public getUserAgent(): HttpAnalyserUserAgent {
-        return this.userAgent;
+    public getConfig(): HttpAnalyserConfig {
+        return this.config;
     }
 
     /**

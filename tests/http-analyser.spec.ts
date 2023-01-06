@@ -44,11 +44,15 @@ test.beforeEach(async ({ page }, testInfo) => {
 
     pageContext = PageContextFactory.getInstance().create(browser.name as Browser, page);
 
-    if (HTTP_ANALYSER_CONFIG.cache.enabled === false) {
-        await pageContext.disableCache();
-    }
+    await pageContext.setCacheEnabled(HTTP_ANALYSER_CONFIG.cache.enabled);
 
-    httpAnalyser = new HttpAnalyser(testInfo.title.substring(testInfo.title.indexOf(': ') + 2), os, browser, ua);
+    httpAnalyser = new HttpAnalyser(
+        testInfo.title.substring(testInfo.title.indexOf(': ') + 2),
+        os,
+        browser,
+        ua,
+        pageContext
+    );
 });
 
 test.afterEach(async ({ page }) => {

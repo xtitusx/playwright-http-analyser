@@ -59,7 +59,7 @@ export class JsonSerializer extends Serializer {
     private buildFileName(): string {
         return this.sanitizeFileName(
             `${JsonSerializer.REPORT_FILE_PREFIX}-${this.httpAnalyser.getDateTime()}-${this.httpAnalyser.getUrl()}-${
-                this.httpAnalyser.getUserAgent().getBrowser().name
+                this.httpAnalyser.getConfig().getBrowser().name
             }${JsonSerializer.REPORT_FILE_EXTENSION}`
         );
     }
