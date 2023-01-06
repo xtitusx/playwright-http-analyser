@@ -60,7 +60,7 @@ export class HttpAnalyser {
         return this.network;
     }
 
-    public getNavigationTimings(): object {
+    public getNavigationTimings(): PerformanceEntry[] {
         return this.navigationTimings;
     }
 
@@ -68,7 +68,7 @@ export class HttpAnalyser {
         this.navigationTimings = perfEntries;
     }
 
-    public getResourceTimings(): object {
+    public getResourceTimings(): PerformanceEntry[] {
         return this.resourceTimings;
     }
 
