@@ -19,8 +19,8 @@ export class HttpAnalyser {
      * Transient property.
      */
     private httpMessageCount: number;
-    private navigationTiming: object;
-    private resourceTiming: object;
+    private navigationTimings: PerformanceEntry[];
+    private resourceTimings: PerformanceEntry[];
 
     constructor(url: string, os: IOS, browser: IBrowser, userAgent: string, pageContext: PageContext) {
         this.dateTime = new Date().toISOString();
@@ -60,20 +60,20 @@ export class HttpAnalyser {
         return this.network;
     }
 
-    public getNavigationTiming(): object {
-        return this.navigationTiming;
+    public getNavigationTimings(): object {
+        return this.navigationTimings;
     }
 
-    public setNavigationTiming(entry: object): void {
-        this.navigationTiming = entry;
+    public setNavigationTimings(perfEntries: PerformanceEntry[]): void {
+        this.navigationTimings = perfEntries;
     }
 
-    public getResourceTiming(): object {
-        return this.resourceTiming;
+    public getResourceTimings(): object {
+        return this.resourceTimings;
     }
 
-    public setResourceTiming(entry: object): void {
-        this.resourceTiming = entry;
+    public setResourceTimings(perfEntries: PerformanceEntry[]): void {
+        this.resourceTimings = perfEntries;
     }
 
     /**
