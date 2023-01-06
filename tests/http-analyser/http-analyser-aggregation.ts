@@ -4,7 +4,7 @@ import { HttpCycle } from './http-cycle';
 import { HttpRequest } from './http-request';
 import { HttpResponse } from './http-response';
 
-export class HttpAnalyserSummary {
+export class HttpAnalyserAggregation {
     private network: {
         count: {
             total: number;

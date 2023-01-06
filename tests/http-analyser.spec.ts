@@ -56,7 +56,7 @@ test.beforeEach(async ({ page }, testInfo) => {
 });
 
 test.afterEach(async ({ page }) => {
-    httpAnalyser.refreshAndGetSummary();
+    httpAnalyser.refreshAndGetAggregation();
 
     console.log(util.inspect(httpAnalyser, { showHidden: false, depth: null, colors: true }));
 

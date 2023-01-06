@@ -1,7 +1,7 @@
 import { Request, Response } from '@playwright/test';
 import { IBrowser, IOS } from 'ua-parser-js';
 
-import { HttpAnalyserSummary } from './http-analyser-summary';
+import { HttpAnalyserAggregation } from './http-analyser-aggregation';
 import { HttpAnalyserConfig } from './http-analyser-config';
 import { HttpCycle } from './http-cycle';
 import { HttpRequest } from './http-request';
@@ -13,7 +13,7 @@ export class HttpAnalyser {
     private dateTime: string;
     private url: string;
     private config: HttpAnalyserConfig;
-    private summary: HttpAnalyserSummary;
+    private aggregation: HttpAnalyserAggregation;
     private network: Map<string, HttpCycle>;
     /**
      * Transient property.
@@ -25,7 +25,7 @@ export class HttpAnalyser {
         this.dateTime = new Date().toISOString();
         this.url = url;
         this.config = new HttpAnalyserConfig(os, browser, userAgent, pageContext.hasCacheEnabled());
-        this.summary = new HttpAnalyserSummary();
+        this.aggregation = new HttpAnalyserAggregation();
         this.network = new Map();
         this.httpMessageCount = 0;
         Object.defineProperty(this, 'httpMessageCount', {
@@ -46,13 +46,13 @@ export class HttpAnalyser {
     }
 
     /**
-     * Forces a summary refresh on the getter if needed.
+     * Forces an aggregation refresh on the getter if needed.
      * @returns
      */
-    public refreshAndGetSummary(): HttpAnalyserSummary {
-        return this.summary.getNetworkTotalCount() !== this.httpMessageCount
-            ? this.summary.aggregate(this.httpMessageCount, this.network)
-            : this.summary;
+    public refreshAndGetAggregation(): HttpAnalyserAggregation {
+        return this.aggregation.getNetworkTotalCount() !== this.httpMessageCount
+            ? this.aggregation.aggregate(this.httpMessageCount, this.network)
+            : this.aggregation;
     }
 
     public getNetwork(): Map<string, HttpCycle> {
