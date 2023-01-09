@@ -36,7 +36,7 @@ test.beforeAll(async ({}, testInfo) => {
 test.beforeEach(async ({ page }, testInfo) => {
     console.log(`Running ${testInfo.title}`);
 
-    httpAnalyser = await new HttpAnalyserFacade(page, testInfo).build();
+    httpAnalyser = await new HttpAnalyserFacade(page, testInfo).createHttpAnalyser();
 });
 
 test.afterEach(async ({ page }) => {

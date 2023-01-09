@@ -19,7 +19,7 @@ export class HttpAnalyserFacade {
     /**
      * Builds a HttpAnalyser instance under the hood.
      */
-    public async build(): Promise<HttpAnalyser> {
+    public async createHttpAnalyser(): Promise<HttpAnalyser> {
         const { os, browser, ua } = uaParser(await this.page.evaluate(() => navigator.userAgent));
 
         const pageContext = PageContextFactory.getInstance().create(browser.name as BrowserType, this.page);
