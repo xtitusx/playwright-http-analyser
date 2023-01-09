@@ -28,12 +28,16 @@ export class PageContext {
     }
 
     /**
+     * Disables cache in browser.
      * @see https://stackoverflow.com/questions/68522170/playwright-disable-caching-of-webpage-so-i-can-fetch-new-elements-after-scrollin
      */
     protected async disableCache(): Promise<void> {
         this.page.route('**', (route) => route.continue());
     }
 
+    /**
+     * Enables cache in browser.
+     */
     protected async enableCache(): Promise<void> {
         this.page.unroute('**', (route) => route.continue());
     }

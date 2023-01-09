@@ -1,5 +1,4 @@
 import util from 'util';
-import uaParser from 'ua-parser-js';
 import { expect, test } from '@playwright/test';
 import { GuardResultBulk, Tyr } from '@xtitusx/type-guard';
 
@@ -7,12 +6,9 @@ import { HTTP_ANALYSER_CONFIG } from './http-analyser/config/http-analyser-confi
 import { HttpAnalyser } from './http-analyser/http-analyser';
 import { SerializerFactory } from './http-analyser/serializer/serializer.factory';
 import { Serializer } from './http-analyser/serializer/serializer';
-import { PageContext } from './http-analyser/page-context/page-context';
-import { PageContextFactory } from './http-analyser/page-context/page-context.factory';
-import { BrowserType } from './http-analyser/dictionaries/browser-type.enum';
+import { HttpAnalyserFacade } from './http-analyser/http-analyser.facade';
 
 let serializer: Serializer;
-let pageContext: PageContext;
 let httpAnalyser: HttpAnalyser;
 
 test.describe.configure({ mode: 'serial' });
@@ -40,19 +36,7 @@ test.beforeAll(async ({}, testInfo) => {
 test.beforeEach(async ({ page }, testInfo) => {
     console.log(`Running ${testInfo.title}`);
 
-    const { os, browser, ua } = uaParser(await page.evaluate(() => navigator.userAgent));
-
-    pageContext = PageContextFactory.getInstance().create(browser.name as BrowserType, page);
-
-    await pageContext.setCacheEnabled(HTTP_ANALYSER_CONFIG.cache.enabled);
-
-    httpAnalyser = new HttpAnalyser(
-        testInfo.title.substring(testInfo.title.indexOf(': ') + 2),
-        os,
-        browser,
-        ua,
-        pageContext
-    );
+    httpAnalyser = await new HttpAnalyserFacade(page, testInfo).build();
 });
 
 test.afterEach(async ({ page }) => {

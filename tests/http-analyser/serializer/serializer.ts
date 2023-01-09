@@ -8,7 +8,7 @@ export abstract class Serializer {
     public abstract serialize(httpAnalyser: HttpAnalyser): void;
 
     /**
-     * Remove all recorded reports.
+     * Removes all recorded reports.
      */
     public abstract clean(): Promise<void>;
 }

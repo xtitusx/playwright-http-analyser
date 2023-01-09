@@ -4,12 +4,14 @@ export class HttpAnalyserConfig {
     private os: IOS;
     private browser: IBrowser;
     private userAgent: string;
+    private workerIndex: number;
     private cacheEnabled: boolean;
 
-    constructor(os: IOS, browser: IBrowser, userAgent: string, cacheEnabled: boolean) {
+    constructor(os: IOS, browser: IBrowser, userAgent: string, workerIndex: number, cacheEnabled: boolean) {
         this.os = os;
         this.browser = browser;
         this.userAgent = userAgent;
+        this.workerIndex = workerIndex;
         this.cacheEnabled = cacheEnabled;
     }
 
@@ -23,6 +25,10 @@ export class HttpAnalyserConfig {
 
     public getUserAgent(): string {
         return this.userAgent;
+    }
+
+    public getWorkerIndex(): number {
+        return this.workerIndex;
     }
 
     public hasCacheEnabled(): boolean {

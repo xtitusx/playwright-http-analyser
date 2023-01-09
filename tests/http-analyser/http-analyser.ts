@@ -1,5 +1,4 @@
 import { Request, Response } from '@playwright/test';
-import { IBrowser, IOS } from 'ua-parser-js';
 
 import { HttpAnalyserAggregation } from './http-analyser-aggregation';
 import { HttpAnalyserConfig } from './http-analyser-config';
@@ -7,7 +6,6 @@ import { HttpCycle } from './http-cycle';
 import { HttpRequest } from './http-request';
 import { HttpResponse } from './http-response';
 import { HttpScheme } from './dictionaries/types';
-import { PageContext } from './page-context/page-context';
 
 export class HttpAnalyser {
     private dateTime: string;
@@ -22,10 +20,14 @@ export class HttpAnalyser {
     private navigationTimings: PerformanceEntry[];
     private resourceTimings: PerformanceEntry[];
 
-    constructor(url: string, os: IOS, browser: IBrowser, userAgent: string, pageContext: PageContext) {
-        this.dateTime = new Date().toISOString();
+    constructor(url: string, config: HttpAnalyserConfig) {
         this.url = url;
-        this.config = new HttpAnalyserConfig(os, browser, userAgent, pageContext.hasCacheEnabled());
+        this.config = config;
+        this.init();
+    }
+
+    private init(): void {
+        this.dateTime = new Date().toISOString();
         this.aggregation = new HttpAnalyserAggregation();
         this.network = new Map();
         this.httpMessageCount = 0;
