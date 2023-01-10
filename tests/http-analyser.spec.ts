@@ -24,7 +24,7 @@ test.beforeAll(async ({}, testInfo) => {
                 .isIn(Object.values(Viewport))
                 .guard(
                     `${HTTP_ANALYSER_CONFIG.viewport.width.toString()}x${HTTP_ANALYSER_CONFIG.viewport.height.toString()}`,
-                    'viewport'
+                    'HTTP_ANALYSER_CONFIG.viewport'
                 ),
         ])
         .combine();
