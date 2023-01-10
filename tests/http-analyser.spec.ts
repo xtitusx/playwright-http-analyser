@@ -7,14 +7,31 @@ import { HttpAnalyser } from './http-analyser/http-analyser';
 import { SerializerFactory } from './http-analyser/serializer/serializer.factory';
 import { Serializer } from './http-analyser/serializer/serializer';
 import { HttpAnalyserFacade } from './http-analyser/http-analyser.facade';
+import { Viewport } from './http-analyser/dictionaries/viewport.enum';
 
 let serializer: Serializer;
 let httpAnalyser: HttpAnalyser;
 
 test.describe.configure({ mode: 'serial' });
+test.use({ viewport: HTTP_ANALYSER_CONFIG.viewport });
 
 test.beforeAll(async ({}, testInfo) => {
-    const guardResult = new GuardResultBulk()
+    let guardResult = new GuardResultBulk()
+        .add([
+            Tyr.number().isWhole().isBetween(1024, 2048).guard(HTTP_ANALYSER_CONFIG.viewport.width),
+            Tyr.number().isWhole().isBetween(720, 1536).guard(HTTP_ANALYSER_CONFIG.viewport.height),
+            Tyr.string()
+                .isIn(Object.values(Viewport))
+                .guard(
+                    `${HTTP_ANALYSER_CONFIG.viewport.width.toString()}x${HTTP_ANALYSER_CONFIG.viewport.height.toString()}`,
+                    'viewport'
+                ),
+        ])
+        .combine();
+
+    expect(guardResult.isSuccess(), guardResult.getMessage()).toBe(true);
+
+    guardResult = new GuardResultBulk()
         .add([
             ...HTTP_ANALYSER_CONFIG.urls.map((url, index) => {
                 return Tyr.string()

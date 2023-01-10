@@ -1,6 +1,7 @@
 import { SerializerType } from '../serializer/serializer-type.enum';
 
 export const HTTP_ANALYSER_CONFIG = {
+    viewport: { width: 1280, height: 720 },
     cache: {
         enabled: true,
     },

@@ -1,18 +1,32 @@
 import { IOS, IBrowser } from 'ua-parser-js';
 
+export interface IViewport {
+    width: number;
+    height: number;
+}
+
 export class HttpAnalyserConfig {
     private os: IOS;
     private browser: IBrowser;
     private userAgent: string;
-    private workerIndex: number;
+    private viewport: IViewport;
     private cacheEnabled: boolean;
+    private workerIndex: number;
 
-    constructor(os: IOS, browser: IBrowser, userAgent: string, workerIndex: number, cacheEnabled: boolean) {
+    constructor(
+        os: IOS,
+        browser: IBrowser,
+        userAgent: string,
+        viewport: IViewport,
+        cacheEnabled: boolean,
+        workerIndex: number
+    ) {
         this.os = os;
         this.browser = browser;
         this.userAgent = userAgent;
-        this.workerIndex = workerIndex;
+        this.viewport = viewport;
         this.cacheEnabled = cacheEnabled;
+        this.workerIndex = workerIndex;
     }
 
     public getOs(): IOS {
@@ -27,11 +41,15 @@ export class HttpAnalyserConfig {
         return this.userAgent;
     }
 
-    public getWorkerIndex(): number {
-        return this.workerIndex;
+    public getViewport(): IViewport {
+        return this.viewport;
     }
 
     public hasCacheEnabled(): boolean {
         return this.cacheEnabled;
+    }
+
+    public getWorkerIndex(): number {
+        return this.workerIndex;
     }
 }

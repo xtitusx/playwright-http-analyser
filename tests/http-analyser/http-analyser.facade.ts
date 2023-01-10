@@ -5,7 +5,7 @@ import { HTTP_ANALYSER_CONFIG } from './config/http-analyser-config.const';
 import { HttpAnalyser } from './http-analyser';
 import { PageContextFactory } from './page-context/page-context.factory';
 import { BrowserType } from './dictionaries/browser-type.enum';
-import { HttpAnalyserConfig } from './http-analyser-config';
+import { HttpAnalyserConfig, IViewport } from './http-analyser-config';
 
 export class HttpAnalyserFacade {
     private page: Page;
@@ -28,7 +28,14 @@ export class HttpAnalyserFacade {
 
         return new HttpAnalyser(
             this.testInfo.title.substring(this.testInfo.title.indexOf(': ') + 2),
-            new HttpAnalyserConfig(os, browser, ua, this.testInfo.workerIndex, pageContext.hasCacheEnabled())
+            new HttpAnalyserConfig(
+                os,
+                browser,
+                ua,
+                this.page.viewportSize() as unknown as IViewport,
+                pageContext.hasCacheEnabled(),
+                this.testInfo.workerIndex
+            )
         );
     }
 }
