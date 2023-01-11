@@ -82,12 +82,18 @@ for (const url of new Set(HTTP_ANALYSER_CONFIG.urls)) {
             httpAnalyser.parseHttpMessage(response);
         });
 
-        await page.goto(url, { waitUntil: 'networkidle' });
+        try {
+            await page.goto(url, { waitUntil: 'networkidle' });
 
-        // Resource Timing API
-        httpAnalyser.setNavigationTimings(await page.evaluate(() => performance.getEntriesByType('navigation')));
+            // Resource Timing API
+            httpAnalyser.setNavigationTimings(await page.evaluate(() => performance.getEntriesByType('navigation')));
 
-        // Resource Timing API
-        httpAnalyser.setResourceTimings(await page.evaluate(() => window.performance.getEntriesByType('resource')));
+            // Resource Timing API
+            httpAnalyser.setResourceTimings(await page.evaluate(() => window.performance.getEntriesByType('resource')));
+        } catch (err) {
+            httpAnalyser.setTestError({ message: err.message, stack: err.stack });
+            test.skip(HTTP_ANALYSER_CONFIG.skipOnFailure === true, err.message);
+            throw err;
+        }
     });
 }

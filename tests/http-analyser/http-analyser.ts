@@ -1,4 +1,4 @@
-import { Request, Response } from '@playwright/test';
+import { Request, Response, TestError } from '@playwright/test';
 
 import { HttpAnalyserAggregation } from './http-analyser-aggregation';
 import { HttpAnalyserConfig } from './http-analyser-config';
@@ -19,6 +19,7 @@ export class HttpAnalyser {
     private httpMessageCount: number;
     private navigationTimings: PerformanceEntry[];
     private resourceTimings: PerformanceEntry[];
+    private testError: TestError;
 
     constructor(url: string, config: HttpAnalyserConfig) {
         this.url = url;
@@ -76,6 +77,14 @@ export class HttpAnalyser {
 
     public setResourceTimings(perfEntries: PerformanceEntry[]): void {
         this.resourceTimings = perfEntries;
+    }
+
+    public getTestError(): TestError {
+        return this.testError;
+    }
+
+    public setTestError(testError: TestError): void {
+        this.testError = testError;
     }
 
     /**
