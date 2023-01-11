@@ -63,8 +63,11 @@ test.afterEach(async ({ page }) => {
 
 for (const url of new Set(HTTP_ANALYSER_CONFIG.urls)) {
     test(`test with URL: ${url}`, async ({ page }) => {
-        // https://playwright.dev/docs/api/class-request
-        // page.on('request') is not capturing favicon.ico URI: https://github.com/microsoft/playwright/issues/7493
+        /**
+         * @see https://playwright.dev/docs/api/class-request
+         * @see https://www.checklyhq.com/learn/headless/request-interception/
+         * @remarks page.on('request') is not capturing favicon.ico URI: https://github.com/microsoft/playwright/issues/7493
+         */
         page.on('request', async (request) => {
             console.log('>>', request.method(), request.url());
 
@@ -79,7 +82,10 @@ for (const url of new Set(HTTP_ANALYSER_CONFIG.urls)) {
 
         await page.goto(url, { waitUntil: 'networkidle' });
 
+        // Resource Timing API
         httpAnalyser.setNavigationTimings(await page.evaluate(() => performance.getEntriesByType('navigation')));
+
+        // Resource Timing API
         httpAnalyser.setResourceTimings(await page.evaluate(() => window.performance.getEntriesByType('resource')));
     });
 }
