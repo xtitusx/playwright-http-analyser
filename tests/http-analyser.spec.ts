@@ -4,9 +4,9 @@ import { GuardResultBulk, Tyr } from '@xtitusx/type-guard';
 
 import { HTTP_ANALYSER_CONFIG } from './http-analyser/config/http-analyser-config.const';
 import { HttpAnalyser } from './http-analyser/http-analyser';
+import { HttpAnalyserFacade } from './http-analyser/http-analyser.facade';
 import { SerializerFactory } from './http-analyser/serializer/serializer.factory';
 import { Serializer } from './http-analyser/serializer/serializer';
-import { HttpAnalyserFacade } from './http-analyser/http-analyser.facade';
 
 let serializer: Serializer;
 let httpAnalyser: HttpAnalyser;
@@ -46,7 +46,13 @@ test.beforeEach(async ({ page }, testInfo) => {
 });
 
 test.afterEach(async ({ page }) => {
-    httpAnalyser.refreshAndGetAggregation();
+    if (HTTP_ANALYSER_CONFIG.aggregation.enabled === true) {
+        httpAnalyser.refreshAndGetAggregation();
+    } else {
+        Object.defineProperty(httpAnalyser, 'aggregation', {
+            enumerable: false,
+        });
+    }
 
     console.log(util.inspect(httpAnalyser, { showHidden: false, depth: null, colors: true }));
 

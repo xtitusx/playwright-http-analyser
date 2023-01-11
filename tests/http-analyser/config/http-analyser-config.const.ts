@@ -18,5 +18,8 @@ export const HTTP_ANALYSER_CONFIG = {
             port: '',
         },
     },
+    aggregation: {
+        enabled: true,
+    },
     urls: ['https://www.google.fr', 'https://www.hardware.fr', 'https://clubic.com'],
 };
