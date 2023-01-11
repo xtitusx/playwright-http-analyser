@@ -1,6 +1,6 @@
 /**
  * @enum Viewport
- * @description List of supported viewports.
+ * @remarks List of supported viewports.
  */
 export enum Viewport {
     VP_DEFAULT = '1280x720',

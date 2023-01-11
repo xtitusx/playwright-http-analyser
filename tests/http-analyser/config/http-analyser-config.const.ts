@@ -1,3 +1,4 @@
+import { LogLevel } from '../dictionaries/log-level.enum';
 import { Viewport } from '../dictionaries/viewport.enum';
 import { SerializerType } from '../serializer/serializer-type.enum';
 
@@ -6,6 +7,14 @@ export const HTTP_ANALYSER_CONFIG = {
     viewport: Viewport.VP_DEFAULT,
     cache: {
         enabled: true,
+    },
+    logger: {
+        logLevel: LogLevel.INFO,
+        silent: false,
+        colorize: {
+            level: true,
+            message: false,
+        },
     },
     serializer: {
         clean: true,

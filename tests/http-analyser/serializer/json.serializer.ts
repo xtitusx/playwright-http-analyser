@@ -4,7 +4,9 @@ import fsPromises from 'fs/promises';
 import * as path from 'path';
 
 import { HTTP_ANALYSER_CONFIG } from '../config/http-analyser-config.const';
+import { LogLevel } from '../dictionaries/log-level.enum';
 import { HttpAnalyser } from '../http-analyser';
+import { WinstonLogger } from '../logger/winston.logger';
 import { Serializer } from './serializer';
 
 export class JsonSerializer extends Serializer {
@@ -51,7 +53,8 @@ export class JsonSerializer extends Serializer {
         await Promise.all(
             files.map((file) => {
                 fsPromises.unlink(path.resolve(HTTP_ANALYSER_CONFIG.serializer.json.relativePath, file));
-                console.log(
+                WinstonLogger.getInstance().log(
+                    LogLevel.INFO,
                     `${HTTP_ANALYSER_CONFIG.serializer.json.relativePath}/${file} has been removed successfully`
                 );
             })

@@ -7,7 +7,10 @@ import { HttpAnalyser } from './http-analyser/http-analyser';
 import { HttpAnalyserFacade } from './http-analyser/http-analyser.facade';
 import { SerializerFactory } from './http-analyser/serializer/serializer.factory';
 import { Serializer } from './http-analyser/serializer/serializer';
+import { WinstonLogger } from './http-analyser/logger/winston.logger';
+import { LogLevel } from './http-analyser/dictionaries/log-level.enum';
 
+const logger = WinstonLogger.getInstance();
 let serializer: Serializer;
 let httpAnalyser: HttpAnalyser;
 
@@ -40,7 +43,7 @@ test.beforeAll(async ({}, testInfo) => {
 });
 
 test.beforeEach(async ({ page }, testInfo) => {
-    console.log(`Running ${testInfo.title}`);
+    logger.log(LogLevel.INFO, `Running ${testInfo.title}`);
 
     httpAnalyser = await new HttpAnalyserFacade(page, testInfo).createHttpAnalyser();
 });
@@ -54,7 +57,7 @@ test.afterEach(async ({ page }) => {
         });
     }
 
-    console.log(util.inspect(httpAnalyser, { showHidden: false, depth: null, colors: true }));
+    logger.log(LogLevel.DEBUG, util.inspect(httpAnalyser, { showHidden: false, depth: null, colors: true }));
 
     const attachmentPath = serializer.serialize(httpAnalyser);
 
@@ -71,14 +74,12 @@ for (const url of new Set(HTTP_ANALYSER_CONFIG.urls)) {
          * @remarks page.on('request') is not capturing favicon.ico URI: https://github.com/microsoft/playwright/issues/7493
          */
         page.on('request', async (request) => {
-            console.log('>>', request.method(), request.url());
-
+            logger.log(LogLevel.INFO, ['>>', request.method(), request.url()].join(' '));
             await httpAnalyser.parseHttpMessage(request);
         });
 
         page.on('response', (response) => {
-            console.log('<<', response.status(), response.url());
-
+            logger.log(LogLevel.INFO, ['<<', response.status(), response.url()].join(' '));
             httpAnalyser.parseHttpMessage(response);
         });
 
@@ -91,8 +92,10 @@ for (const url of new Set(HTTP_ANALYSER_CONFIG.urls)) {
             // Resource Timing API
             httpAnalyser.setResourceTimings(await page.evaluate(() => window.performance.getEntriesByType('resource')));
         } catch (err) {
+            logger.log(HTTP_ANALYSER_CONFIG.skipOnFailure === true ? LogLevel.WARN : LogLevel.ERROR, err.message);
             httpAnalyser.setTestError({ message: err.message, stack: err.stack });
             test.skip(HTTP_ANALYSER_CONFIG.skipOnFailure === true, err.message);
+
             throw err;
         }
     });

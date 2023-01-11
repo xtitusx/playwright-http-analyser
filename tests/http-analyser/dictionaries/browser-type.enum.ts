@@ -1,6 +1,6 @@
 /**
  * @enum BrowserType
- * @description List of supported browser types.
+ * @remarks List of supported browser types.
  */
 export enum BrowserType {
     CHROME = 'Chrome',
