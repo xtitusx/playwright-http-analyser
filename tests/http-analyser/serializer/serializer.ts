@@ -5,7 +5,7 @@ export abstract class Serializer {
 
     constructor() {}
 
-    public abstract serialize(httpAnalyser: HttpAnalyser): void;
+    public abstract serialize(httpAnalyser: HttpAnalyser): string;
 
     /**
      * Removes all recorded reports.

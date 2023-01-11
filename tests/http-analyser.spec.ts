@@ -56,7 +56,9 @@ test.afterEach(async ({ page }) => {
 
     console.log(util.inspect(httpAnalyser, { showHidden: false, depth: null, colors: true }));
 
-    serializer.serialize(httpAnalyser);
+    const attachmentPath = serializer.serialize(httpAnalyser);
+
+    test.info().attach('report', { contentType: 'application/json', path: attachmentPath });
 
     await page.close();
 });

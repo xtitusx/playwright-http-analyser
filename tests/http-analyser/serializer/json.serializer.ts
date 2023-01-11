@@ -19,7 +19,7 @@ export class JsonSerializer extends Serializer {
      * @override
      * @param httpAnalyser
      */
-    public serialize(httpAnalyser: HttpAnalyser): void {
+    public serialize(httpAnalyser: HttpAnalyser): string {
         this.httpAnalyser = httpAnalyser;
 
         const filePath = path.resolve(`./${HTTP_ANALYSER_CONFIG.serializer.json.relativePath}/${this.buildFileName()}`);
@@ -32,6 +32,8 @@ export class JsonSerializer extends Serializer {
                 HTTP_ANALYSER_CONFIG.serializer.json.pretty === true ? 2 : undefined
             )
         );
+
+        return filePath;
     }
 
     /**

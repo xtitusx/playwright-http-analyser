@@ -10,7 +10,7 @@ export class MongoDbSerializer extends Serializer {
      * @override
      * @param httpAnalyser
      */
-    public serialize(httpAnalyser: HttpAnalyser): void {
+    public serialize(httpAnalyser: HttpAnalyser): string {
         throw new Error('Method not implemented.');
     }
 
