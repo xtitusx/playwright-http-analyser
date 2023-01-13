@@ -88,9 +88,16 @@ for (const entry of HTTP_ANALYSER_CONFIG.urls.registry) {
                 await page.evaluate(async function (scrolling: IScrolling) {
                     const delay = (ms: number) => new Promise((resolve) => setTimeout(resolve, ms));
 
-                    for (let i = 0; i < document.body.scrollHeight; i += scrolling.pixels) {
-                        window.scrollTo(0, i);
-                        await delay(scrolling.waitTime);
+                    let repeat = 0;
+
+                    for (let y = 0; y < document.body.scrollHeight; y += scrolling.pixels) {
+                        if (repeat < scrolling.repeat || scrolling.repeat < 0) {
+                            window.scrollTo(0, y);
+                            await delay(scrolling.waitTime);
+                            repeat++;
+                        } else if (repeat === scrolling.repeat) {
+                            break;
+                        }
                     }
                 }, httpAnalyser.getConfig().getScrolling());
             }

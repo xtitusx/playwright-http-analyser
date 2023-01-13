@@ -45,6 +45,7 @@ export const HTTP_ANALYSER_CONFIG = {
                 scrolling: {
                     enabled: true,
                     waitTime: 50,
+                    repeat: 100,
                 },
             },
         ],
