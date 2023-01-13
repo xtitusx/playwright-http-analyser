@@ -83,31 +83,31 @@ export class HttpAnalyserAggregation {
 
     private aggregateNetworkInformationalHttpResponseCount(httpCycles: Array<[string, HttpCycle]>): void {
         this.network.count.httpResponse.informational = httpCycles.filter(([, httpCycle]) =>
-            httpCycle?.getHttpResponse().isInformational()
+            httpCycle?.getHttpResponse()?.isInformational()
         ).length;
     }
 
     private aggregateNetworkSuccessfulHttpResponseCount(httpCycles: Array<[string, HttpCycle]>): void {
         this.network.count.httpResponse.successfull = httpCycles.filter(([, httpCycle]) =>
-            httpCycle?.getHttpResponse().isSuccessful()
+            httpCycle?.getHttpResponse()?.isSuccessful()
         ).length;
     }
 
     private aggregateNetworkRedirectionHttpResponseCount(httpCycles: Array<[string, HttpCycle]>): void {
         this.network.count.httpResponse.redirection = httpCycles.filter(([, httpCycle]) =>
-            httpCycle?.getHttpResponse().isRedirection()
+            httpCycle?.getHttpResponse()?.isRedirection()
         ).length;
     }
 
     private aggregateNetworkClientErrorHttpResponseCount(httpCycles: Array<[string, HttpCycle]>): void {
         this.network.count.httpResponse.clientError = httpCycles.filter(([, httpCycle]) =>
-            httpCycle?.getHttpResponse().isClientError()
+            httpCycle?.getHttpResponse()?.isClientError()
         ).length;
     }
 
     private aggregateNetworkServerErrorHttpResponseCount(httpCycles: Array<[string, HttpCycle]>): void {
         this.network.count.httpResponse.serverError = httpCycles.filter(([, httpCycle]) =>
-            httpCycle?.getHttpResponse().isServerError()
+            httpCycle?.getHttpResponse()?.isServerError()
         ).length;
     }
 }

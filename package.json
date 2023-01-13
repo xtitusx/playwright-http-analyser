@@ -5,6 +5,7 @@
   "main": "index.js",
   "scripts": {
     "test": "npx playwright test http-analyser.spec.ts",
+    "test:headed": "npm run test -- --headed",
     "test:chromium": "npm run test -- --project chromium",
     "test:chromium:headed": "npm run test:chromium -- --headed",
     "lint:check": "eslint --max-warnings 0 --ext .ts src/",
