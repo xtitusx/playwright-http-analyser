@@ -34,6 +34,15 @@ test.beforeEach(async ({ page }, testInfo) => {
     logger.log(LogLevel.INFO, `Running ${testInfo.title}`);
 
     httpAnalyser = await new HttpAnalyserFacade(page, testInfo).createHttpAnalyser();
+
+    logger.log(
+        LogLevel.DEBUG,
+        util.inspect(httpAnalyser.getConfig(), {
+            showHidden: false,
+            depth: null,
+            colors: true,
+        })
+    );
 });
 
 test.afterEach(async ({ page }) => {
@@ -74,7 +83,7 @@ for (const entry of HTTP_ANALYSER_CONFIG.urls.registry) {
         try {
             await page.goto(entry.url, { waitUntil: 'networkidle' });
 
-            if (entry.scrollDown.enabled === true) {
+            if (entry.scrolling.enabled === true) {
                 await page.evaluate(async () => {
                     const delay = (ms: number) => new Promise((resolve) => setTimeout(resolve, ms));
                     for (let i = 0; i < document.body.scrollHeight; i += 100) {

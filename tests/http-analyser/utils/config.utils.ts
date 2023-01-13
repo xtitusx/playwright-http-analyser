@@ -1,7 +1,7 @@
 import { GuardResult, GuardResultBulk, Tyr } from '@xtitusx/type-guard';
 
 import { HTTP_ANALYSER_CONFIG } from '../config/http-analyser-config.const';
-import { IViewport } from '../http-analyser-config';
+import { IScrolling, IViewport } from '../http-analyser-config';
 
 export class ConfigUtils {
     public static convertViewPort(): IViewport {
@@ -24,5 +24,17 @@ export class ConfigUtils {
                 }),
             ])
             .combine();
+    }
+
+    /**
+     * Merges URL scrolling config into default scrolling config.
+     * @param url
+     * @returns
+     */
+    public static getUrlScrolling(url: string): IScrolling {
+        return {
+            ...HTTP_ANALYSER_CONFIG.urls.default.scrolling,
+            ...HTTP_ANALYSER_CONFIG.urls.registry.find((entry) => entry.url === url)?.scrolling,
+        };
     }
 }

@@ -1,11 +1,18 @@
 import { IOS, IBrowser } from 'ua-parser-js';
 
+export interface IScrolling {
+    enabled: boolean;
+    pixels: number;
+    delay: number;
+    repeat: number;
+}
 export interface IViewport {
     width: number;
     height: number;
 }
 
 export class HttpAnalyserConfig {
+    private scrolling: IScrolling;
     private os: IOS;
     private browser: IBrowser;
     private userAgent: string;
@@ -14,6 +21,7 @@ export class HttpAnalyserConfig {
     private workerIndex: number;
 
     constructor(
+        scrolling: IScrolling,
         os: IOS,
         browser: IBrowser,
         userAgent: string,
@@ -21,12 +29,17 @@ export class HttpAnalyserConfig {
         cacheEnabled: boolean,
         workerIndex: number
     ) {
+        this.scrolling = scrolling;
         this.os = os;
         this.browser = browser;
         this.userAgent = userAgent;
         this.viewport = viewport;
         this.cacheEnabled = cacheEnabled;
         this.workerIndex = workerIndex;
+    }
+
+    public getScrolling(): IScrolling {
+        return this.scrolling;
     }
 
     public getOs(): IOS {

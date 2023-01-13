@@ -6,6 +6,7 @@ import { HttpAnalyser } from './http-analyser';
 import { PageContextFactory } from './page-context/page-context.factory';
 import { BrowserType } from './dictionaries/browser-type.enum';
 import { HttpAnalyserConfig, IViewport } from './http-analyser-config';
+import { ConfigUtils } from './utils/config.utils';
 
 export class HttpAnalyserFacade {
     private page: Page;
@@ -26,9 +27,12 @@ export class HttpAnalyserFacade {
 
         await pageContext.setCacheEnabled(HTTP_ANALYSER_CONFIG.cache.enabled);
 
+        const url = this.testInfo.title.substring(this.testInfo.title.indexOf(': ') + 2);
+
         return new HttpAnalyser(
-            this.testInfo.title.substring(this.testInfo.title.indexOf(': ') + 2),
+            url,
             new HttpAnalyserConfig(
+                ConfigUtils.getUrlScrolling(url),
                 os,
                 browser,
                 ua,
