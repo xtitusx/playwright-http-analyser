@@ -9,6 +9,7 @@ import { Serializer } from './http-analyser/serializer/serializer';
 import { WinstonLogger } from './http-analyser/logger/winston.logger';
 import { LogLevel } from './http-analyser/dictionaries/log-level.enum';
 import { ConfigUtils } from './http-analyser/utils/config.utils';
+import { IScrolling } from './http-analyser/http-analyser-config';
 
 const logger = WinstonLogger.getInstance();
 let serializer: Serializer;
@@ -36,7 +37,7 @@ test.beforeEach(async ({ page }, testInfo) => {
     httpAnalyser = await new HttpAnalyserFacade(page, testInfo).createHttpAnalyser();
 
     logger.log(
-        LogLevel.DEBUG,
+        LogLevel.INFO,
         util.inspect(httpAnalyser.getConfig(), {
             showHidden: false,
             depth: null,
@@ -83,14 +84,15 @@ for (const entry of HTTP_ANALYSER_CONFIG.urls.registry) {
         try {
             await page.goto(entry.url, { waitUntil: 'networkidle' });
 
-            if (entry.scrolling.enabled === true) {
-                await page.evaluate(async () => {
+            if (httpAnalyser.getConfig().getScrolling().enabled === true) {
+                await page.evaluate(async function (scrolling: IScrolling) {
                     const delay = (ms: number) => new Promise((resolve) => setTimeout(resolve, ms));
-                    for (let i = 0; i < document.body.scrollHeight; i += 100) {
-                        window.scrollBy(0, i);
-                        await delay(200);
+
+                    for (let i = 0; i < document.body.scrollHeight; i += scrolling.pixels) {
+                        window.scrollTo(0, i);
+                        await delay(scrolling.waitTime);
                     }
-                });
+                }, httpAnalyser.getConfig().getScrolling());
             }
 
             // Resource Timing API

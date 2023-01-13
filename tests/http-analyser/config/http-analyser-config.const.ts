@@ -32,27 +32,19 @@ export const HTTP_ANALYSER_CONFIG = {
         enabled: true,
     },
     urls: {
-        default: { scrolling: { enabled: false, pixels: 100, delay: 100, repeat: 0 } },
+        default: { scrolling: { enabled: false, pixels: 100, waitTime: 100, repeat: -1 } },
         registry: [
             {
                 url: 'https://www.google.fr',
-                scrolling: {
-                    enabled: false,
-                },
             },
             {
                 url: 'https://www.hardware.fr',
-                scrolling: {
-                    enabled: false,
-                    repeat: 1,
-                },
             },
             {
                 url: 'https://www.clubic.com',
                 scrolling: {
-                    enabled: false,
-                    pixels: 100,
-                    delay: 50,
+                    enabled: true,
+                    waitTime: 50,
                 },
             },
         ],

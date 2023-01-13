@@ -3,7 +3,7 @@ import { IOS, IBrowser } from 'ua-parser-js';
 export interface IScrolling {
     enabled: boolean;
     pixels: number;
-    delay: number;
+    waitTime: number;
     repeat: number;
 }
 export interface IViewport {
