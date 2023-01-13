@@ -13,7 +13,7 @@ export const HTTP_ANALYSER_CONFIG = {
         silent: false,
         colorize: {
             level: true,
-            message: false,
+            message: true,
         },
     },
     serializer: {
@@ -31,5 +31,29 @@ export const HTTP_ANALYSER_CONFIG = {
     aggregation: {
         enabled: true,
     },
-    urls: ['https://www.google.fr', 'https://www.hardware.fr', 'https://clubic.com'],
+    urls: {
+        defaultScrollDown: { enabled: false, pixels: 100, delay: 100 },
+        registry: [
+            {
+                url: 'https://www.google.fr',
+                scrollDown: {
+                    enabled: false,
+                },
+            },
+            {
+                url: 'https://www.hardware.fr',
+                scrollDown: {
+                    enabled: false,
+                },
+            },
+            {
+                url: 'https://www.clubic.com',
+                scrollDown: {
+                    enabled: false,
+                    pixels: 100,
+                    delay: 50,
+                },
+            },
+        ],
+    },
 };

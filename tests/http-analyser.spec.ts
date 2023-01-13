@@ -1,6 +1,5 @@
 import util from 'util';
 import { expect, test } from '@playwright/test';
-import { GuardResultBulk, Tyr } from '@xtitusx/type-guard';
 
 import { HTTP_ANALYSER_CONFIG } from './http-analyser/config/http-analyser-config.const';
 import { HttpAnalyser } from './http-analyser/http-analyser';
@@ -9,6 +8,7 @@ import { SerializerFactory } from './http-analyser/serializer/serializer.factory
 import { Serializer } from './http-analyser/serializer/serializer';
 import { WinstonLogger } from './http-analyser/logger/winston.logger';
 import { LogLevel } from './http-analyser/dictionaries/log-level.enum';
+import { ConfigUtils } from './http-analyser/utils/config.utils';
 
 const logger = WinstonLogger.getInstance();
 let serializer: Serializer;
@@ -16,23 +16,11 @@ let httpAnalyser: HttpAnalyser;
 
 test.describe.configure({ mode: 'serial' });
 test.use({
-    viewport: {
-        width: parseInt(HTTP_ANALYSER_CONFIG.viewport.split('x').shift() as string),
-        height: parseInt(HTTP_ANALYSER_CONFIG.viewport.split('x').pop() as string),
-    },
+    viewport: ConfigUtils.convertViewPort(),
 });
 
 test.beforeAll(async ({}, testInfo) => {
-    const guardResult = new GuardResultBulk()
-        .add([
-            ...HTTP_ANALYSER_CONFIG.urls.map((url, index) => {
-                return Tyr.string()
-                    .matches(new RegExp('^http[s]?://[^ ]*$'))
-                    .guard(url, `URL_ANALYSER_CONFIG.urls[${index}]`);
-            }),
-        ])
-        .combine();
-
+    const guardResult = ConfigUtils.guardUrls();
     expect(guardResult.isSuccess(), guardResult.getMessage()).toBe(true);
 
     serializer = SerializerFactory.getInstance().create(HTTP_ANALYSER_CONFIG.serializer.type);
@@ -66,8 +54,8 @@ test.afterEach(async ({ page }) => {
     await page.close();
 });
 
-for (const url of new Set(HTTP_ANALYSER_CONFIG.urls)) {
-    test(`test with URL: ${url}`, async ({ page }) => {
+for (const entry of HTTP_ANALYSER_CONFIG.urls.registry) {
+    test(`test with URL: ${entry.url}`, async ({ page }) => {
         /**
          * @see https://playwright.dev/docs/api/class-request
          * @see https://www.checklyhq.com/learn/headless/request-interception/
@@ -84,7 +72,17 @@ for (const url of new Set(HTTP_ANALYSER_CONFIG.urls)) {
         });
 
         try {
-            await page.goto(url, { waitUntil: 'networkidle' });
+            await page.goto(entry.url, { waitUntil: 'networkidle' });
+
+            if (entry.scrollDown.enabled === true) {
+                await page.evaluate(async () => {
+                    const delay = (ms: number) => new Promise((resolve) => setTimeout(resolve, ms));
+                    for (let i = 0; i < document.body.scrollHeight; i += 100) {
+                        window.scrollBy(0, i);
+                        await delay(200);
+                    }
+                });
+            }
 
             // Resource Timing API
             httpAnalyser.setNavigationTimings(await page.evaluate(() => performance.getEntriesByType('navigation')));
@@ -92,7 +90,10 @@ for (const url of new Set(HTTP_ANALYSER_CONFIG.urls)) {
             // Resource Timing API
             httpAnalyser.setResourceTimings(await page.evaluate(() => window.performance.getEntriesByType('resource')));
         } catch (err) {
-            logger.log(HTTP_ANALYSER_CONFIG.skipOnFailure === true ? LogLevel.WARN : LogLevel.ERROR, err.message);
+            /**
+             * @example Test timeout exceeded
+             */
+            logger.log(LogLevel.ERROR, err.message);
             httpAnalyser.setTestError({ message: err.message, stack: err.stack });
             test.skip(HTTP_ANALYSER_CONFIG.skipOnFailure === true, err.message);
 
