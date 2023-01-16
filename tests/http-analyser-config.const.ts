@@ -31,24 +31,6 @@ export const HTTP_ANALYSER_CONFIG = {
     aggregation: {
         enabled: true,
     },
-    oldurls: {
-        default: { scrolling: { enabled: false, pixels: 100, waitTime: 100, repeat: -1 } },
-        registry: [
-            {
-                url: 'https://www.google.fr',
-            },
-            {
-                url: 'https://www.hardware.fr',
-            },
-            {
-                url: 'https://www.clubic.com',
-                scrolling: {
-                    enabled: true,
-                    waitTime: 50,
-                },
-            },
-        ],
-    },
     urls: {
         default: { scrolling: { enabled: false, pixels: 100, waitTime: 100, repeat: -1 } },
         registry: {
