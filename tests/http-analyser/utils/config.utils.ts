@@ -1,10 +1,10 @@
 import { GuardResult, GuardResultBulk, Tyr } from '@xtitusx/type-guard';
 
-import { HTTP_ANALYSER_CONFIG } from '../config/http-analyser-config.const';
-import { IScrolling, IViewport } from '../http-analyser-config';
+import { HTTP_ANALYSER_CONFIG } from '../../http-analyser-config.const';
+import { IScrollingOptions as IScrollingOptions, IViewport } from '../http-analyser-config';
 
 export class ConfigUtils {
-    public static convertViewPort(): IViewport {
+    public static initViewPort(): IViewport {
         return {
             width: parseInt(HTTP_ANALYSER_CONFIG.viewport.split('x').shift() as string),
             height: parseInt(HTTP_ANALYSER_CONFIG.viewport.split('x').pop() as string),
@@ -17,24 +17,29 @@ export class ConfigUtils {
     public static guardUrls(): GuardResult {
         return new GuardResultBulk()
             .add([
-                ...HTTP_ANALYSER_CONFIG.urls.registry.map((entry, index) => {
+                ...Object.keys(HTTP_ANALYSER_CONFIG.urls.registry).map((url) => {
                     return Tyr.string()
                         .matches(new RegExp('^http[s]?://[^ ]*$'))
-                        .guard(entry.url, `URL_ANALYSER_CONFIG.urls[${index}]`);
+                        .guard(url, `URL_ANALYSER_CONFIG.urls.registry.${url}`);
                 }),
             ])
             .combine();
     }
 
     /**
-     * Merges URL scrolling config into default scrolling config.
+     * Merges URL scrolling options into default scrolling options.
      * @param url
      * @returns
      */
-    public static getUrlScrolling(url: string): IScrolling {
+    public static getUrlScrollingOptions(url: string): IScrollingOptions {
         return {
             ...HTTP_ANALYSER_CONFIG.urls.default.scrolling,
-            ...HTTP_ANALYSER_CONFIG.urls.registry.find((entry) => entry.url === url)?.scrolling,
+            ...(
+                new Map(Object.entries(HTTP_ANALYSER_CONFIG.urls.registry)) as Map<
+                    string,
+                    { scrolling: IScrollingOptions }
+                >
+            ).get(url)?.scrolling,
         };
     }
 }

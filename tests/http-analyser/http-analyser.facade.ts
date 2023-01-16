@@ -1,7 +1,7 @@
 import { Page, TestInfo } from '@playwright/test';
 import uaParser from 'ua-parser-js';
 
-import { HTTP_ANALYSER_CONFIG } from './config/http-analyser-config.const';
+import { HTTP_ANALYSER_CONFIG } from '../http-analyser-config.const';
 import { HttpAnalyser } from './http-analyser';
 import { PageContextFactory } from './page-context/page-context.factory';
 import { BrowserType } from './dictionaries/browser-type.enum';
@@ -32,7 +32,7 @@ export class HttpAnalyserFacade {
         return new HttpAnalyser(
             url,
             new HttpAnalyserConfig(
-                ConfigUtils.getUrlScrolling(url),
+                ConfigUtils.getUrlScrollingOptions(url),
                 os,
                 browser,
                 ua,

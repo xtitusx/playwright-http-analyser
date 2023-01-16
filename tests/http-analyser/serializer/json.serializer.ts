@@ -3,7 +3,7 @@ import fs from 'fs';
 import fsPromises from 'fs/promises';
 import * as path from 'path';
 
-import { HTTP_ANALYSER_CONFIG } from '../config/http-analyser-config.const';
+import { HTTP_ANALYSER_CONFIG } from '../../http-analyser-config.const';
 import { LogLevel } from '../dictionaries/log-level.enum';
 import { HttpAnalyser } from '../http-analyser';
 import { WinstonLogger } from '../logger/winston.logger';

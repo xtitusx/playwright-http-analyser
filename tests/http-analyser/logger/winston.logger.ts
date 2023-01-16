@@ -1,6 +1,6 @@
 import * as winston from 'winston';
 
-import { HTTP_ANALYSER_CONFIG } from '../config/http-analyser-config.const';
+import { HTTP_ANALYSER_CONFIG } from '../../http-analyser-config.const';
 import { LogLevel } from '../dictionaries/log-level.enum';
 
 /**

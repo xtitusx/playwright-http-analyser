@@ -1,6 +1,6 @@
-import { LogLevel } from '../dictionaries/log-level.enum';
-import { Viewport } from '../dictionaries/viewport.enum';
-import { SerializerType } from '../serializer/serializer-type.enum';
+import { LogLevel } from './http-analyser/dictionaries/log-level.enum';
+import { Viewport } from './http-analyser/dictionaries/viewport.enum';
+import { SerializerType } from './http-analyser/serializer/serializer-type.enum';
 
 export const HTTP_ANALYSER_CONFIG = {
     skipOnFailure: true,
@@ -31,7 +31,7 @@ export const HTTP_ANALYSER_CONFIG = {
     aggregation: {
         enabled: true,
     },
-    urls: {
+    oldurls: {
         default: { scrolling: { enabled: false, pixels: 100, waitTime: 100, repeat: -1 } },
         registry: [
             {
@@ -45,9 +45,21 @@ export const HTTP_ANALYSER_CONFIG = {
                 scrolling: {
                     enabled: true,
                     waitTime: 50,
-                    repeat: 100,
                 },
             },
         ],
+    },
+    urls: {
+        default: { scrolling: { enabled: false, pixels: 100, waitTime: 100, repeat: -1 } },
+        registry: {
+            'https://www.google.fr': {},
+            'https://www.hardware.fr': {},
+            'https://www.clubic.com': {
+                scrolling: {
+                    enabled: true,
+                    waitTime: 50,
+                },
+            },
+        },
     },
 };
