@@ -59,7 +59,7 @@ test.afterEach(async ({ page }) => {
 
     const attachmentPath = serializer.serialize(httpAnalyser);
 
-    test.info().attach('report', { contentType: 'application/json', path: attachmentPath });
+    await test.info().attach('report', { contentType: 'application/json', path: attachmentPath });
 
     await page.close();
 });
