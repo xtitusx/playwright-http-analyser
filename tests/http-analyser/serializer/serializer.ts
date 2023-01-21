@@ -5,10 +5,10 @@ export abstract class Serializer {
 
     constructor() {}
 
-    public abstract serialize(httpAnalyser: HttpAnalyser): void;
+    public abstract serialize(httpAnalyser: HttpAnalyser): string;
 
     /**
-     * Remove all recorded reports.
+     * Removes all recorded reports.
      */
     public abstract clean(): Promise<void>;
 }

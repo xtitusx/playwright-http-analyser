@@ -1,8 +1,7 @@
-import { Request, Response } from '@playwright/test';
-import { IBrowser, IOS } from 'ua-parser-js';
+import { Request, Response, TestError } from '@playwright/test';
 
-import { HttpAnalyserSummary } from './http-analyser-summary';
-import { HttpAnalyserUserAgent } from './http-analyser-user-agent';
+import { HttpAnalyserAggregation } from './http-analyser-aggregation';
+import { HttpAnalyserConfig } from './http-analyser-config';
 import { HttpCycle } from './http-cycle';
 import { HttpRequest } from './http-request';
 import { HttpResponse } from './http-response';
@@ -11,20 +10,27 @@ import { HttpScheme } from './dictionaries/types';
 export class HttpAnalyser {
     private dateTime: string;
     private url: string;
-    private userAgent: HttpAnalyserUserAgent;
-    private summary: HttpAnalyserSummary;
-    private httpCyclesByUrl: Map<string, HttpCycle>;
+    private config: HttpAnalyserConfig;
+    private aggregation: HttpAnalyserAggregation;
+    private network: Map<string, HttpCycle>;
     /**
      * Transient property.
      */
     private httpMessageCount: number;
+    private navigationTimings: PerformanceEntry[];
+    private resourceTimings: PerformanceEntry[];
+    private testError: TestError;
 
-    constructor(url: string, os: IOS, browser: IBrowser, userAgent: string) {
-        this.dateTime = new Date().toISOString();
+    constructor(url: string, config: HttpAnalyserConfig) {
         this.url = url;
-        this.userAgent = new HttpAnalyserUserAgent(os, browser, userAgent);
-        this.summary = new HttpAnalyserSummary();
-        this.httpCyclesByUrl = new Map();
+        this.config = config;
+        this.init();
+    }
+
+    private init(): void {
+        this.dateTime = new Date().toISOString();
+        this.aggregation = new HttpAnalyserAggregation();
+        this.network = new Map();
         this.httpMessageCount = 0;
         Object.defineProperty(this, 'httpMessageCount', {
             enumerable: false,
@@ -39,22 +45,46 @@ export class HttpAnalyser {
         return this.url;
     }
 
-    public getUserAgent(): HttpAnalyserUserAgent {
-        return this.userAgent;
+    public getConfig(): HttpAnalyserConfig {
+        return this.config;
     }
 
     /**
-     * Forces a summary refresh on the getter if needed.
+     * Forces an aggregation refresh on the getter if needed.
      * @returns
      */
-    public refreshAndGetSummary(): HttpAnalyserSummary {
-        return this.summary.getHttpMessageCount() !== this.httpMessageCount
-            ? this.summary.aggregate(this.httpMessageCount, this.httpCyclesByUrl)
-            : this.summary;
+    public refreshAndGetAggregation(): HttpAnalyserAggregation {
+        return this.aggregation.getNetworkTotalCount() !== this.httpMessageCount
+            ? this.aggregation.aggregate(this.httpMessageCount, this.network)
+            : this.aggregation;
     }
 
-    public getHttpCyclesByUrl(): Map<string, HttpCycle> {
-        return this.httpCyclesByUrl;
+    public getNetwork(): Map<string, HttpCycle> {
+        return this.network;
+    }
+
+    public getNavigationTimings(): PerformanceEntry[] {
+        return this.navigationTimings;
+    }
+
+    public setNavigationTimings(perfEntries: PerformanceEntry[]): void {
+        this.navigationTimings = perfEntries;
+    }
+
+    public getResourceTimings(): PerformanceEntry[] {
+        return this.resourceTimings;
+    }
+
+    public setResourceTimings(perfEntries: PerformanceEntry[]): void {
+        this.resourceTimings = perfEntries;
+    }
+
+    public getTestError(): TestError {
+        return this.testError;
+    }
+
+    public setTestError(testError: TestError): void {
+        this.testError = testError;
     }
 
     /**
@@ -86,10 +116,10 @@ export class HttpAnalyser {
 
         const httpRequest = new HttpRequest(request, httpScheme);
 
-        if (this.getHttpCyclesByUrl().has(request.url())) {
-            this.getHttpCyclesByUrl().get(request.url())?.setHttpRequest(httpRequest);
+        if (this.getNetwork().has(request.url())) {
+            this.getNetwork().get(request.url())?.setHttpRequest(httpRequest);
         } else {
-            this.getHttpCyclesByUrl().set(request.url(), new HttpCycle({ httpRequest: httpRequest }));
+            this.getNetwork().set(request.url(), new HttpCycle({ httpRequest: httpRequest }));
         }
     }
 
@@ -100,10 +130,10 @@ export class HttpAnalyser {
     private addHttpResponse(response: Response): void {
         const httpResponse = new HttpResponse(response);
 
-        if (this.getHttpCyclesByUrl().has(response.url())) {
-            this.getHttpCyclesByUrl().get(response.url())?.setHttpResponse(httpResponse);
+        if (this.getNetwork().has(response.url())) {
+            this.getNetwork().get(response.url())?.setHttpResponse(httpResponse);
         } else {
-            this.getHttpCyclesByUrl().set(response.url(), new HttpCycle({ httpResponse: httpResponse }));
+            this.getNetwork().set(response.url(), new HttpCycle({ httpResponse: httpResponse }));
         }
     }
 

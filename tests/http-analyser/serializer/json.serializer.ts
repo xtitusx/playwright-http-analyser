@@ -3,8 +3,10 @@ import fs from 'fs';
 import fsPromises from 'fs/promises';
 import * as path from 'path';
 
-import { HTTP_ANALYSER_CONFIG } from '../config/http-analyser-config.const';
+import { HTTP_ANALYSER_CONFIG } from '../../http-analyser-config.const';
+import { LogLevel } from '../dictionaries/log-level.enum';
 import { HttpAnalyser } from '../http-analyser';
+import { WinstonLogger } from '../logger/winston.logger';
 import { Serializer } from './serializer';
 
 export class JsonSerializer extends Serializer {
@@ -19,7 +21,7 @@ export class JsonSerializer extends Serializer {
      * @override
      * @param httpAnalyser
      */
-    public serialize(httpAnalyser: HttpAnalyser): void {
+    public serialize(httpAnalyser: HttpAnalyser): string {
         this.httpAnalyser = httpAnalyser;
 
         const filePath = path.resolve(`./${HTTP_ANALYSER_CONFIG.serializer.json.relativePath}/${this.buildFileName()}`);
@@ -27,10 +29,13 @@ export class JsonSerializer extends Serializer {
             filePath,
             JSON.stringify(
                 this.httpAnalyser,
-                (key, value) => (key === 'httpCyclesByUrl' ? Array.from(value) : value),
+                (key, value) =>
+                    key === 'network' && value.hasOwnProperty('count') === false ? Array.from(value) : value,
                 HTTP_ANALYSER_CONFIG.serializer.json.pretty === true ? 2 : undefined
             )
         );
+
+        return filePath;
     }
 
     /**
@@ -48,7 +53,8 @@ export class JsonSerializer extends Serializer {
         await Promise.all(
             files.map((file) => {
                 fsPromises.unlink(path.resolve(HTTP_ANALYSER_CONFIG.serializer.json.relativePath, file));
-                console.log(
+                WinstonLogger.getInstance().log(
+                    LogLevel.INFO,
                     `${HTTP_ANALYSER_CONFIG.serializer.json.relativePath}/${file} has been removed successfully`
                 );
             })
@@ -58,7 +64,7 @@ export class JsonSerializer extends Serializer {
     private buildFileName(): string {
         return this.sanitizeFileName(
             `${JsonSerializer.REPORT_FILE_PREFIX}-${this.httpAnalyser.getDateTime()}-${this.httpAnalyser.getUrl()}-${
-                this.httpAnalyser.getUserAgent().getBrowser().name
+                this.httpAnalyser.getConfig().getBrowser().name
             }${JsonSerializer.REPORT_FILE_EXTENSION}`
         );
     }
